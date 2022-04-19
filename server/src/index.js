@@ -7,6 +7,7 @@ const appConfig = require('./config/app');
 const dbConfig = require('./config/db');
 const apiRouters = require('./routes/api');
 const userModel = require('./models/user');
+const postModel = require('./models/post');
 
 const app = express();
 
