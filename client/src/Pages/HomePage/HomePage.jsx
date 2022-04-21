@@ -1,5 +1,6 @@
 import HomePageTitle from "../../Components/HomePageTitle/HomePageTitle";
 import HomePageCompanies from "../../Components/HomePageCompanies/HomePageCompanies";
+import { Link } from "react-router-dom";
 import "./HomePage.scss";
 
 function HomePage() {
@@ -7,8 +8,8 @@ function HomePage() {
         <div className="homepage">
             <div className="introduction">
                 <div className="introduction__decoration">
-                    <img src="/Img/decoration-homepage.svg"></img>
-                    <img src="/Img/decoration-homepage.svg"></img>
+                    <img src="/Img/decoration-homepage.svg" alt=""></img>
+                    <img src="/Img/decoration-homepage.svg" alt=""></img>
                 </div>
                 <div className="introduction__start">
                     <svg width="48" height="48" fill="hsl(27,90%,50%)">
@@ -18,9 +19,9 @@ function HomePage() {
                         Find the best answer to your technical question, help
                         others answer theirs
                     </h2>
-                    <a href="/">Join the community</a>
+                    <a href="/users/signup">Join the community</a>
                     <p>
-                        or <a href="/">search content</a>
+                        or <Link to="/questions">search content</Link>
                     </p>
                 </div>
                 <HomePageTitle />
@@ -53,7 +54,7 @@ function HomePage() {
             </div>
             <div className="introduction__column">
                 <div className="column__logo"></div>
-                <img src="/Img/illo-public.svg"></img>
+                <img src="/Img/illo-public.svg" alt=""></img>
                 <div className="column__title">
                     A public platform building the definitive collection of
                     coding questions & answers
@@ -63,9 +64,9 @@ function HomePage() {
                     technical challenges, and one of the most popular websites
                     in the world.
                 </div>
-                <a href="/">Join the community</a>
+                <a href="/users/signup">Join the community</a>
                 <p>
-                    or <a href="/">search content</a>
+                    or <Link to="/questions">search content</Link>
                 </p>
             </div>
             <HomePageCompanies />

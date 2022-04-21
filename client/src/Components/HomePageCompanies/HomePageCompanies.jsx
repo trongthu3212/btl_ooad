@@ -1,9 +1,9 @@
 import { useState, useEffect } from "react";
 
 function HomePageCompanies() {
-    const [indexCompanies, setIndexCompanies] = useState(0);
+    const [indexCompany, setIndexCompany] = useState(0);
 
-    const listCompanies = [
+    const companies = [
         "chevron-alt.svg",
         "philips-alt.svg",
         "logitech-alt.svg",
@@ -19,12 +19,12 @@ function HomePageCompanies() {
     ];
 
     function handleClickSite(indexSite) {
-        setIndexCompanies(indexSite);
+        setIndexCompany(indexSite);
     }
 
     useEffect(() => {
         const interval = setInterval(function () {
-            setIndexCompanies((prevIndex) =>
+            setIndexCompany((prevIndex) =>
                 prevIndex + 1 === 3 ? 0 : prevIndex + 1
             );
         }, 3500);
@@ -40,42 +40,46 @@ function HomePageCompanies() {
             <div className="companies-used__logos">
                 <img
                     src={`https://cdn.sstatic.net/Img/product/teams/logos/${
-                        listCompanies[indexCompanies * 4]
+                        companies[indexCompany * 4]
                     }`}
-                ></img>
+                    alt=""
+                />
                 <img
                     src={`https://cdn.sstatic.net/Img/product/teams/logos/${
-                        listCompanies[indexCompanies * 4 + 1]
+                        companies[indexCompany * 4 + 1]
                     }`}
-                ></img>
+                    alt=""
+                />
                 <img
                     src={`https://cdn.sstatic.net/Img/product/teams/logos/${
-                        listCompanies[indexCompanies * 4 + 2]
+                        companies[indexCompany * 4 + 2]
                     }`}
-                ></img>
+                    alt=""
+                />
                 <img
                     src={`https://cdn.sstatic.net/Img/product/teams/logos/${
-                        listCompanies[indexCompanies * 4 + 3]
+                        companies[indexCompany * 4 + 3]
                     }`}
-                ></img>
+                    alt=""
+                />
             </div>
             <div className="companies-used__nav">
                 <span
                     onClick={() => handleClickSite(0)}
                     style={
-                        indexCompanies === 0 ? { backgroundColor: "black" } : {}
+                        indexCompany === 0 ? { backgroundColor: "black" } : {}
                     }
                 ></span>
                 <span
                     onClick={() => handleClickSite(1)}
                     style={
-                        indexCompanies === 1 ? { backgroundColor: "black" } : {}
+                        indexCompany === 1 ? { backgroundColor: "black" } : {}
                     }
                 ></span>
                 <span
                     onClick={() => handleClickSite(2)}
                     style={
-                        indexCompanies === 2 ? { backgroundColor: "black" } : {}
+                        indexCompany === 2 ? { backgroundColor: "black" } : {}
                     }
                 ></span>
             </div>

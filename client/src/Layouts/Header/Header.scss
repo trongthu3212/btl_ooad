@@ -9,7 +9,7 @@
 }
 
 body {
-    background-color: #F8F9F9;
+    background-color: #f8f9f9;
 }
 
 @mixin LoginSignupBtn($color, $backgroundColor) {
@@ -39,20 +39,36 @@ body {
     position: fixed;
     width: 100%;
     border-top: 3px solid orange;
-    background-color: #F8F9F9;
+    background-color: #f8f9f9;
     z-index: 1;
 
-    .header__logo {
-        height: 30px;
-        width: 150px;
-        background-position: 0 -500px;
-        background-image: url("../../../public/Img/sprites.svg");
+    > a {
+        display: inline-block;
+        height: 50px;
+        width: 170px;
+
+        &:hover {
+            background-color: hsl(210, 8%, 90%);
+        }
+
+        .header__logo {
+            margin-top: 10px;
+            margin-left: 10px;
+            height: 30px;
+            width: 150px;
+            background-position: 0 -500px;
+            background-image: url("../../../public/Img/sprites.svg");
+        }
     }
 
     .header__about {
         padding: 5px 10px;
         border-radius: 20px;
         margin-right: 50px;
+         
+        a {
+            text-decoration: none;
+        }
 
         &:hover {
             cursor: pointer;
@@ -89,5 +105,10 @@ body {
 
     .header__signup {
         @include LoginSignupBtn(#ffffff, #0a95ff);
+
+        a {
+            text-decoration: none;
+            color: white;
+        }
     }
 }
