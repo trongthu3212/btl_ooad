@@ -50,8 +50,8 @@ function setupSession() {
 
 function bindAndStartServer() {
   // Work as body parser
-  app.use(express.urlencoded({ extended: false }));
-  app.use('/api/', apiRouters)
+  app.use(express.urlencoded({ extended: true }));
+  app.use('/', apiRouters)
   app.listen(appConfig.port, () => console.log('Listening on port %d', appConfig.port))  
 }
 

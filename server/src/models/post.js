@@ -1,13 +1,12 @@
 var mongoose = require("mongoose");
 
 var postSchema = mongoose.Schema({
-    title: String,
+    title: {
+        type: String,
+        required: true
+    }, 
     content: String,
-    postID: {
-        type: String, 
-        unique: true,
-        require: true
-    } 
+    author: { type: mongoose.Schema.Types.ObjectId, ref: 'user' } 
 } , {
     timestamps: true
 })
