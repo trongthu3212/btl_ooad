@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { Link } from "react-router-dom";
 import ReCAPTCHA from "react-google-recaptcha";
+import userSchema from "../../Helpers/ValidationUser";
 import "./SignupPage.scss";
 
 function SignupPage() {
@@ -23,15 +24,25 @@ function SignupPage() {
 
     function handleSubmit(e) {
         e.preventDefault();
-        if (isCaptchaChecked) {
-            console.log(displayname + " " + email + " " + password);
-        }
+
+        userSchema
+            .validate({
+                displayname: displayname,
+                email: email,
+                password: password,
+            })
+            .then((response) => {
+                if (response && isCaptchaChecked) {
+                    console.log(displayname + " " + email + " " + password);
+                } else alert("Captcha required");
+            })
+            .catch((err) => {
+                alert(err.errors);
+            });
     }
 
     function onChangeCaptcha(value) {
-        if (value) {
-            setIsCaptchaChecked(true);
-        }
+        value && setIsCaptchaChecked(true);
     }
 
     return (

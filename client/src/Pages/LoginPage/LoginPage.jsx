@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Link } from "react-router-dom";
+import userSchema from "../../Helpers/ValidationUser";
 import "./LoginPage.scss";
 
 function LoginPage() {
@@ -13,9 +13,21 @@ function LoginPage() {
     function handleChangePassword(e) {
         setPassword(e.target.value);
     }
+
     function handleSubmit(e) {
         e.preventDefault();
-        console.log(email + " " + password);
+        userSchema
+            .validate({
+                displayname: "",
+                email: email,
+                password: password,
+            })
+            .then((response) => {
+                response && console.log(email + " " + password);
+            })
+            .catch((err) => {
+                alert(err.errors);
+            });
     }
 
     return (
