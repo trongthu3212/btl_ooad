@@ -35,6 +35,7 @@ async function handleUserRegister(req, res) {
     userModel.register({ username: req.body.username, email: email }, req.body.password)
         .then(user => { res.sendStatus(200); })
         .catch(err => { res.json({ error: err })});
+    
 }
 
 function handleUserDeauth(req, res) {

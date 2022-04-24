@@ -5,7 +5,10 @@ var postSchema = mongoose.Schema({
         type: String,
         required: true
     }, 
-    content: String,
+    content: {
+        type: String,
+        required: true
+    }, 
     author: { type: mongoose.Schema.Types.ObjectId, ref: 'user' } 
 } , {
     timestamps: true
