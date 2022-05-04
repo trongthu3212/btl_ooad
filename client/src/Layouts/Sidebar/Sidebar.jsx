@@ -1,30 +1,36 @@
-import { Link } from "react-router-dom";
+import { NavLink } from "react-router-dom";
 import "./Sidebar.scss";
 
-function Sidebar({ namePage }) {
+function Sidebar() {
     return (
         <div className="sidebar">
             <div className="sidebar-nav">
-                <Link to="/">Home</Link>
+                <NavLink to="/">Home</NavLink>
                 <p>PUBLIC</p>
-                <Link
+                <NavLink
                     to="/questions"
-                    className={namePage === "questions" ? "target-active" : ""}
+                    className={({ isActive }) =>
+                        isActive ? "target-active" : ""
+                    }
                 >
                     Questions
-                </Link>
-                <Link
-                    to="/"
-                    className={namePage === "tags" ? "target-active" : ""}
+                </NavLink>
+                <NavLink
+                    to="/tags"
+                    className={({ isActive }) =>
+                        isActive ? "target-active" : ""
+                    }
                 >
                     Tags
-                </Link>
-                <Link
-                    to="/"
-                    className={namePage === "users" ? "target-active" : ""}
+                </NavLink>
+                <NavLink
+                    to="/users"
+                    className={({ isActive }) =>
+                        isActive ? "target-active" : ""
+                    }
                 >
                     Users
-                </Link>
+                </NavLink>
             </div>
         </div>
     );

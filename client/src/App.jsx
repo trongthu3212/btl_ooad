@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect, useContext } from "react";
 import Header from "./Layouts/Header/Header";
 import Footer from "./Layouts/Footer/Footer";
 import {
@@ -7,22 +7,42 @@ import {
     SignupPage,
     QuestionsPage,
     NotFoundPage,
+    AdminPage,
 } from "./Pages/pages";
+import RequireAuth from "./Auth/RequireAuth";
 import { Routes, Route } from "react-router-dom";
+import { getCurrentUser } from "./Api/user-api";
+import AuthContext from "./Auth/AuthProvider";
+import Cookies from "js-cookie";
 
 function App() {
+    const { setAuth } = useContext(AuthContext);
+
+    useEffect(() => {
+        Cookies.get("connect.sid") &&
+            getCurrentUser().then((currentUser) => {
+                setAuth(currentUser);
+            });
+    }, []);
+
     return (
         <React.Fragment>
             <Header />
 
             <Routes>
-                <Route path="/" element={<HomePage />} />
+                {/* public routes */}
+                <Route index element={<HomePage />} />
                 <Route path="users">
                     <Route path="login" element={<LoginPage />} />
                     <Route path="signup" element={<SignupPage />} />
                 </Route>
                 <Route path="questions" element={<QuestionsPage />} />
                 <Route path="*" element={<NotFoundPage />} />
+
+                {/* protected routes */}
+                <Route element={<RequireAuth allowedRole="admin" />}>
+                    <Route path="admin" element={<AdminPage />} />
+                </Route>
             </Routes>
 
             <Footer />

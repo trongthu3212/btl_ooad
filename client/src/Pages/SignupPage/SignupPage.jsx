@@ -1,7 +1,7 @@
 import { useState } from "react";
-import { Link } from "react-router-dom";
+import { Link,useNavigate } from "react-router-dom";
 import ReCAPTCHA from "react-google-recaptcha";
-import userSchema from "../../Helpers/ValidationUser";
+import { handleRegistration } from "../../Helpers/handle-registration";
 import "./SignupPage.scss";
 
 function SignupPage() {
@@ -9,6 +9,8 @@ function SignupPage() {
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
     const [isCaptchaChecked, setIsCaptchaChecked] = useState(false);
+
+    const navigate = useNavigate();
 
     function handleChangeDisplayname(e) {
         setDisplayname(e.target.value);
@@ -24,21 +26,7 @@ function SignupPage() {
 
     function handleSubmit(e) {
         e.preventDefault();
-
-        userSchema
-            .validate({
-                displayname: displayname,
-                email: email,
-                password: password,
-            })
-            .then((response) => {
-                if (response && isCaptchaChecked) {
-                    console.log(displayname + " " + email + " " + password);
-                } else alert("Captcha required");
-            })
-            .catch((err) => {
-                alert(err.errors);
-            });
+        handleRegistration(displayname, email, password, isCaptchaChecked, navigate);
     }
 
     function onChangeCaptcha(value) {

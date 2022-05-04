@@ -4,7 +4,7 @@ import "./QuestionsPage.scss";
 function QuestionsPage() {
     return (
         <div className="questions-page">
-            <Sidebar namePage="questions" />
+            <Sidebar />
             <h1>Questions Page</h1>
         </div>
     );

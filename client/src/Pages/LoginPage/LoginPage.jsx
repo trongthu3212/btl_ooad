@@ -1,10 +1,16 @@
-import { useState } from "react";
-import userSchema from "../../Helpers/ValidationUser";
+import { useState, useContext } from "react";
+import { handleLogin } from "../../Helpers/handle-login";
+import { useNavigate, useLocation } from "react-router-dom";
+import AuthContext from "../../Auth/AuthProvider";
 import "./LoginPage.scss";
 
 function LoginPage() {
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
+
+    const { setAuth } = useContext(AuthContext);
+    const navigate = useNavigate();
+    const location = useLocation();
 
     function handleChangeEmail(e) {
         setEmail(e.target.value);
@@ -16,18 +22,7 @@ function LoginPage() {
 
     function handleSubmit(e) {
         e.preventDefault();
-        userSchema
-            .validate({
-                displayname: "",
-                email: email,
-                password: password,
-            })
-            .then((response) => {
-                response && console.log(email + " " + password);
-            })
-            .catch((err) => {
-                alert(err.errors);
-            });
+        handleLogin(email, password, setAuth, navigate, location);
     }
 
     return (

@@ -1,11 +1,29 @@
 import { useNavigate, Link } from "react-router-dom";
+import Cookies from "js-cookie";
+import React, { useContext } from "react";
+import AuthContext from "../../Auth/AuthProvider";
+import HeaderNotification from "../../Components/HeaderNotification/HeaderNotification";
 import "./Header.scss";
 
 function Header() {
     let navigate = useNavigate();
+    const { auth, setAuth } = useContext(AuthContext);
 
     function handleLoginBtn() {
-        navigate("users/login");
+        navigate("/users/login");
+    }
+
+    function handleLogoutBtn() {
+        if (window.confirm("Are you sure you want to log out ?")) {
+            setAuth({});
+            Cookies.remove("connect.sid");
+            alert("Logout success");
+            navigate("/");
+        }
+    }
+
+    function handleProfileBtn() {
+        navigate("/users/my-profile");
     }
 
     return (
@@ -23,14 +41,27 @@ function Header() {
                 </svg>
                 <input type="text" name="search" placeholder="Search..." />
             </div>
+            {auth.user ? (
+                <React.Fragment>
+                    <div className="header__profile" onClick={handleProfileBtn}>
+                        <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/a/a7/React-icon.svg/1200px-React-icon.svg.png"></img>
+                    </div>
+                    <HeaderNotification />
+                    <div className="header__logout" onClick={handleLogoutBtn}>
+                        Logout
+                    </div>
+                </React.Fragment>
+            ) : (
+                <React.Fragment>
+                    <div className="header__login" onClick={handleLoginBtn}>
+                        Log in
+                    </div>
 
-            <div className="header__login" onClick={handleLoginBtn}>
-                Log in
-            </div>
-
-            <div className="header__signup">
-                <a href="/users/signup">Sign up</a>
-            </div>
+                    <div className="header__signup">
+                        <a href="/users/signup">Sign up</a>
+                    </div>
+                </React.Fragment>
+            )}
         </div>
     );
 }
