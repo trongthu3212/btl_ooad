@@ -8,6 +8,7 @@ import {
     QuestionsPage,
     NotFoundPage,
     AdminPage,
+    AskQuestionPage,
 } from "./Pages/pages";
 import RequireAuth from "./Auth/RequireAuth";
 import { Routes, Route } from "react-router-dom";
@@ -36,7 +37,10 @@ function App() {
                     <Route path="login" element={<LoginPage />} />
                     <Route path="signup" element={<SignupPage />} />
                 </Route>
-                <Route path="questions" element={<QuestionsPage />} />
+                <Route path="questions">
+                    <Route index element={<QuestionsPage />} />
+                    <Route path="ask" element={<AskQuestionPage />} />
+                </Route>
                 <Route path="*" element={<NotFoundPage />} />
 
                 {/* protected routes */}
