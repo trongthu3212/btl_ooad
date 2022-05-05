@@ -8,9 +8,11 @@ var postController = require('../controllers/PostController')
 
 routers.get('/test', testController.execute)
 routers.get('/emailExisted', userController.emailExisted)
+routers.get('/listPosts', postController.list)
+routers.get('/user/:username', userController.info)
 routers.post('/login', [ authEnsurance.ensureLoggedOut, passport.authenticate('local') ], userController.auth)
 routers.post('/logout', authEnsurance.ensureLoggedIn, userController.deauth)
 routers.post('/register', authEnsurance.ensureLoggedOut, userController.register)
-routers.post('/addPost', postController.add)
+routers.post('/addPost', authEnsurance.ensureLoggedIn, postController.add)
 
 module.exports = routers;

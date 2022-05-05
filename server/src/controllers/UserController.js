@@ -19,7 +19,8 @@ async function handleUserCheckEmailExists(req, res) {
 async function handleUserRegister(req, res) {
     let email = req.body.email;
     let username = req.body.username;
-    let password= req.body.password;
+    let password = req.body.password;
+    let name = req.body.name;
 
     if ((email == null) || (username == null) || (password == null)) {
         return res.status(400).send({ message: 'One of the arguments is not provided!' });
@@ -32,10 +33,21 @@ async function handleUserRegister(req, res) {
         });
     }
 
-    userModel.register({ username: req.body.username, email: email }, req.body.password)
+    userModel.register({ username: req.body.username, email: email, name: name }, req.body.password)
         .then(user => { res.sendStatus(200); })
         .catch(err => { res.json({ error: err })});
-    
+}
+
+async function handleUserInfo(req, res) {
+    let username = req.params.username;
+    let userObj = await userModel.findOne({ username: username });
+
+    if ((userObj == null) || (userObj == undefined)) {
+        res.sendStatus(404);
+    } else {
+        let readableName = (userObj.name == null) ? userObj.username : userObj.name;
+        res.json({ username: username, readableName: readableName, email: userObj.email, joinTime: userObj._id.getTimestamp() })
+    }
 }
 
 function handleUserDeauth(req, res) {
@@ -48,5 +60,6 @@ module.exports = {
     auth: handleUserAuth,
     deauth: handleUserDeauth,
     register: handleUserRegister,
+    info: handleUserInfo,
     emailExisted: handleUserCheckEmailExists,
 }
