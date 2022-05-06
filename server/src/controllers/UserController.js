@@ -50,6 +50,10 @@ async function handleUserInfo(req, res) {
     }
 }
 
+async function handleCurrentUserInfo(req, res) {
+    res.json({ id: req.user._id, username: req.user.username });
+}
+
 function handleUserDeauth(req, res) {
     req.logout();
     res.clearCookie('connect.sid', {path: '/'});
@@ -61,5 +65,6 @@ module.exports = {
     deauth: handleUserDeauth,
     register: handleUserRegister,
     info: handleUserInfo,
+    currentInfo: handleCurrentUserInfo,
     emailExisted: handleUserCheckEmailExists,
 }
