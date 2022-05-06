@@ -3,6 +3,7 @@ const express = require('express');
 const mongoose = require('mongoose')
 const session = require('express-session')
 const passport = require('passport')
+const cors = require('cors')
 
 // Application's requirements
 const appConfig = require('./config/app');
@@ -51,6 +52,7 @@ function setupSession() {
 function bindAndStartServer() {
   // Work as body parser
   app.use(express.urlencoded({ extended: true }));
+  app.use(cors({ origin: '*' }))
   app.use('/', apiRouters)
   app.listen(appConfig.port, () => console.log('Listening on port %d', appConfig.port))  
 }
