@@ -34,11 +34,23 @@ function connectToDb() {
 }
 
 function setupSession() {
+  var corsOption = {
+    origin: 'http://localhost:3000',
+    credentials: true,
+    allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With' ],
+    methods: ['POST', 'PUT', 'GET', 'OPTIONS', 'HEAD', 'DELETE']
+  };
+  app.use(cors(corsOption))
   app.use(session({
     secret: sessionConfig.secret,
     resave: false,
     saveUninitialized: true,
-    cookie: { maxAge: sessionConfig.loginExpireInSeconds * 1000 }
+    cookie: {
+      maxAge: sessionConfig.loginExpireInSeconds * 1000,
+      secure: process.env.NODE_ENV === 'production' ? true : false,
+      httpOnly: process.env.NODE_ENV === 'production' ? true : false,
+      sameSite: process.env.NODE_ENV === 'production' ? "none" : false
+    }
   }));
 
   app.use(passport.initialize());
@@ -52,7 +64,6 @@ function setupSession() {
 function bindAndStartServer() {
   // Work as body parser
   app.use(express.urlencoded({ extended: true }));
-  app.use(cors({ origin: '*' }))
   app.use('/', apiRouters)
   app.listen(appConfig.port, () => console.log('Listening on port %d', appConfig.port))  
 }
