@@ -41,7 +41,7 @@ function Header() {
                 </svg>
                 <input type="text" name="search" placeholder="Search..." />
             </div>
-            {auth.user ? (
+            {auth?.username ? (
                 <React.Fragment>
                     <div className="header__profile" onClick={handleProfileBtn}>
                         <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/a/a7/React-icon.svg/1200px-React-icon.svg.png"></img>

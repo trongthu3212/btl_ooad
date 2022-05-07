@@ -1,4 +1,3 @@
-import { SERVER_URL } from "./server-url";
 import axios from "axios";
 
 export const login = async (email, password) => {
@@ -8,7 +7,7 @@ export const login = async (email, password) => {
     });
 
     try {
-        const { data } = await axios.post(`${SERVER_URL}/login`, payload);
+        const { data } = await axios.post("login", payload);
         return data;
     } catch (error) {
         console.log(error);
@@ -23,7 +22,7 @@ export const signup = async (displayname, email, password) => {
     });
 
     try {
-        const { data } = await axios.post(`${SERVER_URL}/register`, payload);
+        const { data } = await axios.post("register", payload);
         return data;
     } catch (error) {
         console.log(error);
@@ -31,9 +30,11 @@ export const signup = async (displayname, email, password) => {
 };
 
 export const getCurrentUser = async () => {
-    const data = {
-        role: "admin",
-        user: { displayname: "displayname" },
-    };
-    return data;
+    try {
+        const { data } = await axios.get("currentUser");
+        data.role = "user";
+        return data;
+    } catch (error) {
+        console.log(error);
+    }
 };
