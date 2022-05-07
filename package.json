@@ -1,0 +1,6 @@
+{
+  "dependencies": {
+    "cors": "^2.8.5",
+    "mongoose-paginate-v2": "^1.6.3"
+  }
+}
