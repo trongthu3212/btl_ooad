@@ -4,7 +4,7 @@ export const postQuestion = async (title, content, tags) => {
     const payload = new URLSearchParams({
         title: title,
         content: content,
-        // tags: tags.split(" "),
+        tags: tags.split(" "),
     });
 
     try {
@@ -14,3 +14,12 @@ export const postQuestion = async (title, content, tags) => {
         console.log(error);
     }
 };
+export const getPost = async (idQuestion) => {
+    try {
+        const { data } = await axios.get(`getPost/${idQuestion}`);
+        return data;
+    } catch (error) {
+        console.log(error);
+    }
+};
+

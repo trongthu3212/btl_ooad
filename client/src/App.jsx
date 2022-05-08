@@ -9,6 +9,7 @@ import {
     NotFoundPage,
     AdminPage,
     AskQuestionPage,
+    QuestionPage,
 } from "./Pages/pages";
 import RequireAuth from "./Auth/RequireAuth";
 import { Routes, Route } from "react-router-dom";
@@ -38,6 +39,7 @@ function App() {
                     <Route path="signup" element={<SignupPage />} />
                 </Route>
                 <Route path="questions">
+                    <Route path=":idQuestion" element={<QuestionPage />} />
                     <Route index element={<QuestionsPage />} />
                     <Route path="ask" element={<AskQuestionPage />} />
                 </Route>
