@@ -45,7 +45,19 @@ async function listPosts(req, res) {
     }
 }
 
+async function getPost(req, res) {
+    let id = req.body._id;
+    let post = await postModel.findById(id).populate({ path: 'author', select: 'username name' });
+
+    if ((post == null) || (post == undefined)) {
+        res.status(404);
+    } else {
+        res.json(post);
+    }
+}
+
 module.exports = {
     add: addPost,
-    list: listPosts
+    list: listPosts,
+    get: getPost
 }
