@@ -21,8 +21,10 @@ function AskQuestionPage() {
     function submmitQuestion() {
         if (window.confirm("Are you sure you want to public your question ?")) {
             postQuestion(title, content, tags).then((res) => {
-                alert("Success " + res.postId);
-                navigate("/questions");
+                if (res.postId) {
+                    alert("Success " + res.postId);
+                    navigate("/questions");
+                } else alert("ERROR: " + res);
             });
         }
     }

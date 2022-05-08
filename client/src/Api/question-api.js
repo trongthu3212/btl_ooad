@@ -4,7 +4,7 @@ export const postQuestion = async (title, content, tags) => {
     const payload = new URLSearchParams({
         title: title,
         content: content,
-        // tags: tags.split(" "),
+        tags: tags.split(" "),
     });
 
     try {
