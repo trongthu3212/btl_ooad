@@ -46,8 +46,8 @@ async function listPosts(req, res) {
 }
 
 async function getPost(req, res) {
-    let id = req.body._id;
-    let post = await postModel.findById(id).populate({ path: 'author', select: 'username name' });
+    let {idquestion} = req.params;
+    let post = await postModel.findById(idquestion).populate({ path: 'author', select: 'username name' });
 
     if ((post == null) || (post == undefined)) {
         res.status(404);
