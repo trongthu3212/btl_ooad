@@ -46,7 +46,7 @@ async function listPosts(req, res) {
 }
 
 async function getPost(req, res) {
-    let id = req.body._id;
+    let id = req.params._id;
     let post = await postModel.findById(id).populate({ path: 'author', select: 'username name' });
 
     if ((post == null) || (post == undefined)) {
@@ -57,15 +57,33 @@ async function getPost(req, res) {
 }
 
 async function updatePost(req, res) {
-    postModel.updateOne({ _id: req.query._id}, req.body)
-        .then(post => { res.sendStatus(200) })
-        .catch(err => { res.json({ error: err })});
+    let obj = await postModel.findById(req.body._id);
+    if ((obj == undefined) || (obj == null)) {
+        res.sendStatus(404);
+    } else {
+        if ((req.user.role.EDIT_ANY == true) || (req.user._id.equals(obj.author))) {
+            postModel.updateOne({ _id: req.body._id}, req.body)
+                .then(post => { res.sendStatus(200) })
+                .catch(err => { res.json({ error: err })});
+        } else {
+            res.sendStatus(401);
+        }
+    }
 }   
 
 async function deletePost(req, res) {
-    await postModel.deleteOne({ "_id": req.query._id})
-        .then(post => { res.sendStatus(200) })
-        .catch(err => { res.json({ error: err })});
+    let obj = await postModel.findById(req.body._id);
+    if ((obj == undefined) || (obj == null)) {
+        res.sendStatus(404);
+    } else {
+        if ((req.user.role.DELETE_ANY == true) || (req.user._id.equals(obj.author))) {
+            await postModel.deleteOne({ "_id": req.body._id})
+            .then(post => { res.sendStatus(200) })
+            .catch(err => { res.json({ error: err })});
+        } else {
+            res.sendStatus(401);
+        }
+    }
 }
 
 module.exports = {
