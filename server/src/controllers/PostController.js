@@ -56,8 +56,22 @@ async function getPost(req, res) {
     }
 }
 
+async function updatePost(req, res) {
+    postModel.updateOne({ _id: req.query._id}, req.body)
+        .then(post => { res.sendStatus(200) })
+        .catch(err => { res.json({ error: err })});
+}   
+
+async function deletePost(req, res) {
+    await postModel.deleteOne({ "_id": req.query._id})
+        .then(post => { res.sendStatus(200) })
+        .catch(err => { res.json({ error: err })});
+}
+
 module.exports = {
     add: addPost,
     list: listPosts,
-    get: getPost
+    get: getPost,
+    update: updatePost,
+    delete: deletePost,
 }

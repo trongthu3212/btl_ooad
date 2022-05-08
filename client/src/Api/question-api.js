@@ -1,15 +1,15 @@
-import { SERVER_URL } from "./server-url";
 import axios from "axios";
 
 export const postQuestion = async (title, content, tags) => {
-    const payload = {
+    const payload = new URLSearchParams({
         title: title,
         content: content,
-        tags: tags.split(" "),
-    };
+        // tags: tags.split(" "),
+    });
 
     try {
-        console.log(payload);
+        const { data } = await axios.post("addPost", payload);
+        return data;
     } catch (error) {
         console.log(error);
     }

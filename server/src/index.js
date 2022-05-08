@@ -24,7 +24,7 @@ function connectToDb() {
     `mongodb+srv://${dbConfig.username}:${dbConfig.password}@${dbConfig.clusterName}.oqca2.mongodb.net/${dbConfig.databaseName}?retryWrites=true&w=majority`, 
   {
     useNewUrlParser: true,
-    useUnifiedTopology: true
+    useUnifiedTopology: true,
   }
   );
   

@@ -18,7 +18,7 @@ export const handleLogin = (email, password, setAuth, navigate, location) => {
                         setAuth(currentUser);
                     });
                     navigate(from, { replace: true });
-                } else alert("ERROR: " + responseData);
+                } else alert("ERROR: Please correct the email and password !");
             });
         })
         .catch((err) => {
