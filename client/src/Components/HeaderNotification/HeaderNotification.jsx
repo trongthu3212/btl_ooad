@@ -11,7 +11,6 @@ function HeaderNotification() {
         { title: "title", date: "date", content: "content", link: "/" },
     ]);
 
-
     function handleNotificationView() {
         setNotificationView(!notificationView);
     }
@@ -25,8 +24,7 @@ function HeaderNotification() {
         <div className="header__notification">
             <img
                 src="https://uxwing.com/wp-content/themes/uxwing/download/37-communication-chat-call/bell.png"
-                onClick={handleNotificationView}
-            ></img>
+                onClick={handleNotificationView}></img>
 
             {notificationView && (
                 <div className="notification__messages">
@@ -35,15 +33,10 @@ function HeaderNotification() {
                         <div
                             className="message"
                             key={index}
-                            onClick={() => handleOnClickMessage(message.link)}
-                        >
-                            <div className="message__title">
-                                {message.title}
-                            </div>
+                            onClick={() => handleOnClickMessage(message.link)}>
+                            <div className="message__title">{message.title}</div>
                             <div className="message__date">{message.date}</div>
-                            <div className="message__content">
-                                {message.content}
-                            </div>
+                            <div className="message__content">{message.content}</div>
                         </div>
                     ))}
                 </div>

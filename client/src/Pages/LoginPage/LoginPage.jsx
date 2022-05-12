@@ -39,20 +39,12 @@ function LoginPage() {
             <div className="loginpage__form">
                 <form onSubmit={handleSubmit}>
                     <div className="form__email">Email</div>
-                    <input
-                        type="text"
-                        value={email}
-                        onChange={handleChangeEmail}
-                    />
+                    <input type="text" value={email} onChange={handleChangeEmail} />
                     <div className="form__password">
                         Password
                         <a href="/">Forgot password?</a>
                     </div>
-                    <input
-                        type="password"
-                        value={password}
-                        onChange={handleChangePassword}
-                    />
+                    <input type="password" value={password} onChange={handleChangePassword} />
                     <input type="submit" value="Log in" />
                 </form>
             </div>

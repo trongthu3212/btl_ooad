@@ -32,7 +32,6 @@ export const signup = async (displayname, email, password) => {
 export const getCurrentUser = async () => {
     try {
         const { data } = await axios.get("currentUser");
-        data.role = "user";
         return data;
     } catch (error) {
         console.log(error);

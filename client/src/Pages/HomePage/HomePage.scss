@@ -34,11 +34,7 @@
     .introduction {
         height: 900px;
         border-radius: 10px;
-        background: linear-gradient(
-            180deg,
-            hsl(210, 8%, 15%) 0%,
-            hsl(210, 8%, 35%) 130%
-        );
+        background: linear-gradient(180deg, hsl(210, 8%, 15%) 0%, hsl(210, 8%, 35%) 130%);
         padding-top: 50px;
 
         .introduction__decoration img:first-child {

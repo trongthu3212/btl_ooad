@@ -24,9 +24,7 @@ function HomePageCompanies() {
 
     useEffect(() => {
         const interval = setInterval(function () {
-            setIndexCompany((prevIndex) =>
-                prevIndex + 1 === 3 ? 0 : prevIndex + 1
-            );
+            setIndexCompany((prevIndex) => (prevIndex + 1 === 3 ? 0 : prevIndex + 1));
         }, 3500);
         return () => clearInterval(interval);
     }, []);
@@ -34,8 +32,7 @@ function HomePageCompanies() {
     return (
         <div className="companies-used">
             <div className="companies-used__heading">
-                Thousands of organizations around the globe use Stack Overflow
-                for Teams
+                Thousands of organizations around the globe use Stack Overflow for Teams
             </div>
             <div className="companies-used__logos">
                 <img
@@ -66,22 +63,13 @@ function HomePageCompanies() {
             <div className="companies-used__nav">
                 <span
                     onClick={() => handleClickSite(0)}
-                    style={
-                        indexCompany === 0 ? { backgroundColor: "black" } : {}
-                    }
-                ></span>
+                    style={indexCompany === 0 ? { backgroundColor: "black" } : {}}></span>
                 <span
                     onClick={() => handleClickSite(1)}
-                    style={
-                        indexCompany === 1 ? { backgroundColor: "black" } : {}
-                    }
-                ></span>
+                    style={indexCompany === 1 ? { backgroundColor: "black" } : {}}></span>
                 <span
                     onClick={() => handleClickSite(2)}
-                    style={
-                        indexCompany === 2 ? { backgroundColor: "black" } : {}
-                    }
-                ></span>
+                    style={indexCompany === 2 ? { backgroundColor: "black" } : {}}></span>
             </div>
         </div>
     );

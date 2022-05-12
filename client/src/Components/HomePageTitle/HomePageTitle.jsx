@@ -13,9 +13,7 @@ function HomePageTitle() {
 
     useEffect(() => {
         const interval = setInterval(function () {
-            setDevIndex((prevIndex) =>
-                prevIndex + 1 === 5 ? 0 : prevIndex + 1
-            );
+            setDevIndex((prevIndex) => (prevIndex + 1 === 5 ? 0 : prevIndex + 1));
         }, 2500);
 
         return () => clearInterval(interval);
@@ -23,8 +21,7 @@ function HomePageTitle() {
 
     return (
         <div className="introduction__title">
-            Every <span>{kindOfDevs[devIndex]}</span> has a {"\n"} tab open to
-            Stack Overflow
+            Every <span>{kindOfDevs[devIndex]}</span> has a {"\n"} tab open to Stack Overflow
         </div>
     );
 }
