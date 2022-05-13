@@ -56,13 +56,23 @@ async function getPost(req, res) {
     }
 }
 
+async function getAllPosts(req, res) {
+    let posts = await postModel.find();
+
+    if (!posts) {
+        res.status(404);
+    } else {
+        res.json(posts);
+    }
+}
+
 async function updatePost(req, res) {
-    let obj = await postModel.findById(req.body._id);
+    let obj = await postModel.findById(req.query._id);
     if ((obj == undefined) || (obj == null)) {
         res.sendStatus(404);
     } else {
         if ((req.user.role.EDIT_ANY == true) || (req.user._id.equals(obj.author))) {
-            postModel.updateOne({ _id: req.body._id}, req.body)
+            postModel.updateOne({ _id: req.query._id}, req.body)
                 .then(post => { res.sendStatus(200) })
                 .catch(err => { res.json({ error: err })});
         } else {
@@ -90,6 +100,7 @@ module.exports = {
     add: addPost,
     list: listPosts,
     get: getPost,
+    getAll: getAllPosts,
     update: updatePost,
     delete: deletePost,
 }

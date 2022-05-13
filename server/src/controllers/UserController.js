@@ -56,6 +56,16 @@ async function handleCurrentUserInfo(req, res) {
     res.json({ id: req.user._id, username: req.user.username, role: req.user.role.NAME });
 }
 
+async function getAllUsers(req, res) {
+    let users = await userModel.find();
+
+    if (!users) {
+        res.status(404);
+    } else {
+        res.json(users);
+    }
+}
+
 async function handleSetUserRole(req, res) {
     let role = req.body.role;
     console.log(role)
@@ -105,6 +115,7 @@ module.exports = {
     deauth: handleUserDeauth,
     register: handleUserRegister,
     info: handleUserInfo,
+    getAll: getAllUsers,
     currentInfo: handleCurrentUserInfo,
     emailExisted: handleUserCheckEmailExists,
     updateRole: handleSetUserRole,

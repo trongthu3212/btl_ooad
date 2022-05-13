@@ -1,18 +1,26 @@
 import React, { useState } from "react";
+import { Pages } from "./AdminPage.tsx";
 import { postQuestion, deletePost, updatePost } from "../../Api/question-api";
 
 // data props have at least one record to use following component
 function AdminPageContent({ data, pageName }: { data: Array<any>; pageName: string }) {
-    const [currentFormData, setCurrentFormData] = useState({});
+    const [currentFormData, setCurrentFormData] = useState<any>({});
     const [isFormEnable, setIsFormEnable] = useState(false);
 
     function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
         e.preventDefault();
-        console.log(currentFormData);
+        if (pageName == Pages.POST) {
+            updatePost(
+                currentFormData._id,
+                currentFormData.title,
+                currentFormData.content,
+                currentFormData.title
+            ).then((res) => {});
+        }
     }
 
     function handleFormEnable(e: React.MouseEvent<HTMLButtonElement, MouseEvent>, recordData: any) {
-        if (!recordData?.id) {
+        if (!recordData?._id) {
             let recordDataEmpty = { ...data[0] };
             Object.keys(recordDataEmpty).forEach((key) => (recordDataEmpty[key] = ""));
             setCurrentFormData(recordDataEmpty);
@@ -22,8 +30,8 @@ function AdminPageContent({ data, pageName }: { data: Array<any>; pageName: stri
         setIsFormEnable(true);
     }
 
-    function handleDeleteForm(e: React.MouseEvent<HTMLButtonElement, MouseEvent>, id: number) {
-        console.log(id);
+    function handleDeleteForm(e: React.MouseEvent<HTMLButtonElement, MouseEvent>, _id: number) {
+        deletePost(_id).then((res) => {});
     }
 
     function handleChangeForm(e: React.ChangeEvent<HTMLInputElement>, key: string) {
@@ -57,7 +65,7 @@ function AdminPageContent({ data, pageName }: { data: Array<any>; pageName: stri
                             </button>
                             <button
                                 onClick={(e) => {
-                                    handleDeleteForm(e, obj.id);
+                                    handleDeleteForm(e, obj._id);
                                 }}>
                                 Delete
                             </button>

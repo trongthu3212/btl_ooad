@@ -29,6 +29,15 @@ export const signup = async (displayname, email, password) => {
     }
 };
 
+export const getAllUsers = async () => {
+    try {
+        const { data } = await axios.get("getAllUsers");
+        return data;
+    } catch (error) {
+        console.log(error);
+    }
+};
+
 export const getCurrentUser = async () => {
     try {
         const { data } = await axios.get("currentUser");

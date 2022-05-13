@@ -24,6 +24,15 @@ export const getPost = async (idQuestion) => {
     }
 };
 
+export const getAllPosts = async () => {
+    try {
+        const { data } = await axios.get("getAllPosts");
+        return data;
+    } catch (error) {
+        console.log(error);
+    }
+};
+
 export const deletePost = async (idQuestion) => {
     const payload = new URLSearchParams({
         _id: idQuestion,

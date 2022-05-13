@@ -23,7 +23,7 @@ function App() {
     useEffect(() => {
         Cookies.get("connect.sid") &&
             getCurrentUser().then((currentUser) => {
-                setAuth(currentUser);
+                currentUser && setAuth(currentUser);
             });
     }, []);
 

@@ -1,8 +1,10 @@
 import { useState, useEffect } from "react";
 import AdminPageContent from "./AdminPageContent.tsx";
+import { getAllUsers } from "../../Api/user-api";
+import { getAllPosts } from "../../Api/question-api";
 import "./AdminPage.scss";
 
-enum Pages {
+export const enum Pages {
     USER = "User",
     POST = "Post",
 }
@@ -12,26 +14,23 @@ function AdminPage() {
     const [pageName, setPageName] = useState(Pages.USER);
 
     useEffect(() => {
-        setData([
-            { id: 1, username: "minhvu", password: 1, role: "admin" },
-            { id: 2, username: "vuminh", password: 2, role: "user" },
-        ]);
+        getAllUsers().then((res) => {
+            setData(res);
+        });
     }, []);
 
     function handleSideUser() {
-        setData([
-            { id: 1, username: "minhvu", password: 1, role: "admin" },
-            { id: 2, username: "vuminh", password: 2, role: "user" },
-        ]);
-        setPageName(Pages.USER);
+        getAllUsers().then((res) => {
+            setData(res);
+            setPageName(Pages.USER);
+        });
     }
 
     function handleSidePost() {
-        setData([
-            { id: 1, title: "fun", content: "something fun", type: "sleep" },
-            { id: 2, title: "sad", content: "something sad", type: "javascript" },
-        ]);
-        setPageName(Pages.POST);
+        getAllPosts().then((res) => {
+            setData(res);
+            setPageName(Pages.POST);
+        });
     }
 
     return (
