@@ -46,15 +46,11 @@ export const deletePost = async (idQuestion) => {
     }
 };
 
-export const updatePost = async (idQuestion, title, content, tags) => {
-    const payload = new URLSearchParams({
-        title: title,
-        content: content,
-        tags: tags,
-    });
+export const updatePost = async (post) => {
+    const payload = new URLSearchParams(post);
 
     try {
-        const { data } = await axios.put(`updatePost?_id=${idQuestion}`, payload);
+        const { data } = await axios.put(`updatePost?_id=${post._id}`, payload);
         return data;
     } catch (error) {
         console.log(error);

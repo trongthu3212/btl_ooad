@@ -23,7 +23,7 @@ function Header() {
     }
 
     function handleProfileBtn() {
-        navigate("/users/my-profile");
+        navigate(`/users/${auth?.id}`);
     }
 
     return (

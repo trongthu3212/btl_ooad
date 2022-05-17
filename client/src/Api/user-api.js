@@ -38,6 +38,27 @@ export const getAllUsers = async () => {
     }
 };
 
+export const getUser = async (idUser) => {
+    try {
+        return { name: "NameUser", reputation: 123, about: "About me !" };
+    } catch (error) {
+        console.log(error);
+    }
+};
+
+export const updateProfile = async (profileUploaded) => {
+    const payload = new URLSearchParams({
+        ...profileUploaded,
+        file: profileUploaded.userAvatar,
+    });
+
+    try {
+        return "OK";
+    } catch (error) {
+        console.log(error);
+    }
+};
+
 export const getCurrentUser = async () => {
     try {
         const { data } = await axios.get("currentUser");

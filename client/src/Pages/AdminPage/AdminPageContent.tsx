@@ -9,13 +9,8 @@ function AdminPageContent({ data, pageName }: { data: Array<any>; pageName: stri
 
     function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
         e.preventDefault();
-        if (pageName == Pages.POST) {
-            updatePost(
-                currentFormData._id,
-                currentFormData.title,
-                currentFormData.content,
-                currentFormData.title
-            ).then((res) => {});
+        if (pageName === Pages.POST) {
+            updatePost(currentFormData).then((res) => {});
         }
     }
 

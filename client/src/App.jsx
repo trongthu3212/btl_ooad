@@ -10,6 +10,7 @@ import {
     AdminPage,
     AskQuestionPage,
     QuestionPage,
+    UserProfilePage,
 } from "./Pages/pages";
 import RequireAuth from "./Auth/RequireAuth";
 import { Routes, Route } from "react-router-dom";
@@ -23,7 +24,7 @@ function App() {
     useEffect(() => {
         Cookies.get("connect.sid") &&
             getCurrentUser().then((currentUser) => {
-                currentUser && setAuth(currentUser);
+                setAuth(currentUser);
             });
     }, []);
 
@@ -37,10 +38,11 @@ function App() {
                 <Route path="users">
                     <Route path="login" element={<LoginPage />} />
                     <Route path="signup" element={<SignupPage />} />
+                    <Route path=":idUser" element={<UserProfilePage />} />
                 </Route>
                 <Route path="questions">
-                    <Route path=":idQuestion" element={<QuestionPage />} />
                     <Route index element={<QuestionsPage />} />
+                    <Route path=":idQuestion" element={<QuestionPage />} />
                     <Route path="ask" element={<AskQuestionPage />} />
                 </Route>
                 <Route path="*" element={<NotFoundPage />} />
