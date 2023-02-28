@@ -24,16 +24,16 @@
   },
   "dependencies": {
     "cors": "^2.8.5",
-    "express": "^4.17.3",
-    "express-handlebars": "^6.0.5",
-    "express-session": "^1.17.2",
-    "mongoose": "^6.3.0",
-    "mongoose-paginate-v2": "^1.6.3",
-    "node-sass": "^7.0.1",
-    "passport": "^0.5.2",
-    "passport-local-mongoose": "^7.0.0"
+    "express": "^4.18.2",
+    "express-handlebars": "^6.0.7",
+    "express-session": "^1.17.3",
+    "mongoose": "^7.0.0",
+    "mongoose-paginate-v2": "^1.7.1",
+    "node-sass": "^8.0.0",
+    "passport": "^0.6.0",
+    "passport-local-mongoose": "git+https://github.com/dtt3212/passport-local-mongoose.git#6f6d29"
   },
   "devDependencies": {
-    "nodemon": "^2.0.15"
+    "nodemon": "^2.0.20"
   }
 }

@@ -1,4 +1,4 @@
 module.exports = {
-    secret: 'Group5_SecretKey_123987',
+    secret: 'Group1_SecretKey_321789',
     loginExpireInSeconds: 2 * 24 * 60 * 60 
 }

@@ -21,7 +21,7 @@ function sampleDbInsert() {
 
 function connectToDb() {
   mongoose.connect(
-    `mongodb+srv://${dbConfig.username}:${dbConfig.password}@${dbConfig.clusterName}.oqca2.mongodb.net/${dbConfig.databaseName}?retryWrites=true&w=majority`, 
+    `mongodb+srv://${dbConfig.username}:${dbConfig.password}@${dbConfig.clusterName}.f0yjhhu.mongodb.net/${dbConfig.databaseName}?retryWrites=true&w=majority`, 
   {
     useNewUrlParser: true,
     useUnifiedTopology: true,
