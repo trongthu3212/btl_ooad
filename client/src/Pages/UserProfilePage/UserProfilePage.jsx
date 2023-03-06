@@ -8,8 +8,8 @@ import "./UserProfilePage.scss";
 
 function UserProfilePage() {
     const { idUser } = useParams();
-    const { auth } = useContext<any>(AuthContext);
-    const [user, setUser] = useState<any>({});
+    const { auth } = useContext(AuthContext);
+    const [user, setUser] = useState({});
     const [userAvatar, setUserAvatar] = useState("");
     const [userName, setUserName] = useState("");
     const [userAbout, setUserAbout] = useState("");

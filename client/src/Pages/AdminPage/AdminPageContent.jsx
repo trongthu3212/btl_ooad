@@ -1,20 +1,22 @@
 import React, { useState } from "react";
-import { Pages } from "./AdminPage.tsx";
+import { Pages } from "./AdminPage.jsx";
 import { postQuestion, deletePost, updatePost } from "../../Api/question-api";
+import { DataGrid } from '@mui/x-data-grid';
 
 // data props have at least one record to use following component
-function AdminPageContent({ data, pageName }: { data: Array<any>; pageName: string }) {
-    const [currentFormData, setCurrentFormData] = useState<any>({});
+function AdminPageContent({ data, pageName, loading }) {
+    const [currentFormData, setCurrentFormData] = useState({});
     const [isFormEnable, setIsFormEnable] = useState(false);
 
-    function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
+
+    function handleSubmit(e) {
         e.preventDefault();
         if (pageName === Pages.POST) {
             updatePost(currentFormData).then((res) => {});
         }
     }
 
-    function handleFormEnable(e: React.MouseEvent<HTMLButtonElement, MouseEvent>, recordData: any) {
+    function handleFormEnable(e, recordData) {
         if (!recordData?._id) {
             let recordDataEmpty = { ...data[0] };
             Object.keys(recordDataEmpty).forEach((key) => (recordDataEmpty[key] = ""));
@@ -25,13 +27,76 @@ function AdminPageContent({ data, pageName }: { data: Array<any>; pageName: stri
         setIsFormEnable(true);
     }
 
-    function handleDeleteForm(e: React.MouseEvent<HTMLButtonElement, MouseEvent>, _id: number) {
+    function handleDeleteForm(e, _id) {
         deletePost(_id).then((res) => {});
     }
 
-    function handleChangeForm(e: React.ChangeEvent<HTMLInputElement>, key: string) {
+    function handleChangeForm(e, key) {
         setCurrentFormData({ ...currentFormData, [key]: e.target.value });
     }
+
+    /**
+     * Cấu hình cột cho grid
+     */
+    const columns =
+		pageName === Pages.USER
+			? [
+					{ field: "_id", headerName: "ID", width: 250 },
+					{ field: "username", headerName: "Username", width: 150 },
+					{ field: "email", headerName: "Email", width: 150 },
+					{ field: "role", headerName: "Role", width: 150 },
+					{ field: "createdAt", headerName: "CreatedDate", width: 200 },
+					{ field: "updatedAt", headerName: "ModifiedDate", width: 200 },
+					{
+						field: "actions",
+						type: "actions",
+						getActions: (params) => [
+							<button
+								onClick={(e) => {
+									handleFormEnable(e, params);
+								}}
+							>
+								Edit
+							</button>,
+							<button
+								onClick={(e) => {
+									handleDeleteForm(e, params);
+								}}
+							>
+								Delete
+							</button>,
+						],
+					},
+			  ]
+			: [
+					{ field: "_id", headerName: "ID", width: 250 },
+					{ field: "title", headerName: "Title", width: 150 },
+					{ field: "content", headerName: "Content", width: 150 },
+					{ field: "shortDescription", headerName: "ShortDescription", width: 150 },
+					{ field: "author", headerName: "Author", width: 150 },
+					{ field: "createdAt", headerName: "CreatedDate", width: 200 },
+					{ field: "updatedAt", headerName: "ModifiedDate", width: 200 },
+					{
+						field: "actions",
+						type: "actions",
+						getActions: (params) => [
+							<button
+								onClick={(e) => {
+									handleFormEnable(e, params);
+								}}
+							>
+								Edit
+							</button>,
+							<button
+								onClick={(e) => {
+									handleDeleteForm(e, params);
+								}}
+							>
+								Delete
+							</button>,
+						],
+					},
+			  ];
 
     return (
         <div className="admin__main">
@@ -40,33 +105,8 @@ function AdminPageContent({ data, pageName }: { data: Array<any>; pageName: stri
                 <button onClick={(e) => handleFormEnable(e, {})}>+ New {pageName}</button>
             </div>
             <div className="main__list">
-                <div className="list__field">
-                    {Object.keys(data[0]).map((key, index) => (
-                        <span key={index}>{key}</span>
-                    ))}
-                </div>
-
-                {data.map((obj: any, index: number) => {
-                    return (
-                        <div key={index} className="list__record">
-                            {Object.values(obj).map((value: any, index) => {
-                                return <span key={index}>{value}</span>;
-                            })}
-                            <button
-                                onClick={(e) => {
-                                    handleFormEnable(e, obj);
-                                }}>
-                                Edit
-                            </button>
-                            <button
-                                onClick={(e) => {
-                                    handleDeleteForm(e, obj._id);
-                                }}>
-                                Delete
-                            </button>
-                        </div>
-                    );
-                })}
+                <DataGrid columns={columns} rows={data} getRowId={(row) => row._id}
+                    disableColumnFilter={true} loading={loading} />
             </div>
 
             {isFormEnable && (
