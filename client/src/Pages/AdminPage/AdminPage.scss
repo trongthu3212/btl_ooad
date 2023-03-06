@@ -2,7 +2,6 @@
     padding: 53px 100px 0 100px;
     display: flex;
     height: 800px;
-    overflow: scroll;
 
     .admin__sidebar {
         border-right: 1px solid hsl(210, 8%, 90%);
@@ -15,7 +14,7 @@
             position: sticky;
             top: 60px;
 
-            a {
+            li {
                 text-decoration: none;
                 display: block;
                 height: 35px;
@@ -64,10 +63,8 @@
         }
 
         .main__list {
-            width: 900px;
-            height: 100%;
-            overflow: scroll;
-
+            width: 800px;
+            height: 500px;
             span {
                 margin-left: 50px;
                 display: inline-block;
