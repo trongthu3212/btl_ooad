@@ -17,7 +17,7 @@ function QuestionPage() {
     return (
         <div className="question-page">
             <Sidebar />
-            {/* {idQuestion} */}
+            {idQuestion}
             <div>
                 <div className="question-content">
                     <MDEditor.Markdown source={comment} />

@@ -4,8 +4,27 @@
     box-sizing: border-box;
     font-family: -apple-system, BlinkMacSystemFont, "Segoe UI Adjusted",
         "Segoe UI", "Liberation Sans", sans-serif;
-    font-size: 14px;
-    color: #525960;
+    font-size: 13px;
+    color: #232629;
+    ::-webkit-scrollbar-track {
+        -webkit-box-shadow: inset 0 0 6px rgba(0, 0, 0, 0.3);
+        border-radius: 10px;
+        background-color: #F5F5F5;
+    }
+
+    ::-webkit-scrollbar {
+        width: 12px;
+        background-color: #F5F5F5;
+    }
+
+    ::-webkit-scrollbar-thumb {
+        border-radius: 10px;
+        -webkit-box-shadow: inset 0 0 6px rgba(0, 0, 0, .3);
+        background-color: #c0bfbf;
+        &:hover {
+            background-color: #9c9c9c;
+        }
+    }
 }
 
 body {
@@ -35,7 +54,7 @@ body {
     justify-content: space-between;
     align-items: center;
     box-shadow: 0 0 10px 0 rgb(194, 194, 194);
-    padding: 0 100px 0 100px;
+    padding: 0 12px 0 12px;
     position: fixed;
     width: 100%;
     border-top: 3px solid orange;
@@ -78,7 +97,7 @@ body {
 
     .header__search {
         position: relative;
-
+        flex-grow: 1;
         svg {
             position: absolute;
             top: 9px;
@@ -86,7 +105,7 @@ body {
         }
 
         input {
-            width: 780px;
+            width: 100%;
             height: 35px;
             padding-left: 36px;
             border-radius: 3px;
