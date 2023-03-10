@@ -36,7 +36,7 @@ function UserProfilePage() {
             <div className="user-profile">
                 <div className="profile__header">
                     <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/a/a7/React-icon.svg/1200px-React-icon.svg.png"></img>
-                    <h1>{user?.name}</h1>
+                    <h1>{user?.userName}</h1>
                     {idUser === auth.id && (
                         <div
                             className="edit-profile-btn"

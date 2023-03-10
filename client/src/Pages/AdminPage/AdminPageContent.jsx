@@ -16,7 +16,9 @@ function AdminPageContent({ data, pageName, loading }) {
         }
     }
 
-    function handleFormEnable(e, recordData) {
+
+    function handleFormEnable(e, obj) {
+        let recordData = obj.row;   
         if (!recordData?._id) {
             let recordDataEmpty = { ...data[0] };
             Object.keys(recordDataEmpty).forEach((key) => (recordDataEmpty[key] = ""));
@@ -27,8 +29,8 @@ function AdminPageContent({ data, pageName, loading }) {
         setIsFormEnable(true);
     }
 
-    function handleDeleteForm(e, _id) {
-        deletePost(_id).then((res) => {});
+    function handleDeleteForm(e, obj) {
+        deletePost(obj.id).then((res) => {});
     }
 
     function handleChangeForm(e, key) {

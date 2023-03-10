@@ -40,7 +40,8 @@ export const getAllUsers = async () => {
 
 export const getUser = async (idUser) => {
     try {
-        return { name: "NameUser", reputation: 123, about: "About me !" };
+        const { data } = await axios.get(`user/${idUser}`);
+        return data;
     } catch (error) {
         console.log(error);
     }

@@ -5,7 +5,8 @@ import 'bootstrap/dist/js/bootstrap.bundle';
 import { useEffect, useState } from "react";
 import { getAllPosts } from "../../Api/question-api";
 import Loader from "../../Components/Loader/Loader";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
+import { ToggleButton, ToggleButtonGroup } from "@mui/material";
 
 function QuestionsPage() {
     const navigate = useNavigate();
@@ -16,6 +17,9 @@ function QuestionsPage() {
     // Cờ check loading
     const [isLoading, setIsLoading] = useState(true);
 
+    // Lọc câu hỏi theo trạng thái
+    const [state, setState] = useState("newest");
+
     // Lấy dữ liệu câu hỏi
     useEffect(() => {
       getAllPosts().then(res => {
@@ -23,7 +27,15 @@ function QuestionsPage() {
         setIsLoading(false);
       })
     }, []);
-    
+
+    /**
+     * Thay đổi nhóm câu hỏi
+     * @param {*} e 
+     * @param {*} newVal 
+     */
+    function handleState(e, newVal) {
+        setState(newVal);
+    }
 
     /**
      * Điều hướng sang trang câu hỏi
@@ -33,58 +45,81 @@ function QuestionsPage() {
     }
 
     return (
-        <div className={styles["questions-page"]}>
-            <Sidebar />
+		<div className={styles["questions-page"]}>
+			<Sidebar />
 
-            <div className="container">
-                <nav className="navbar navbar-expand-lg navbar-light bg-light">
-                    <div className="container-fluid">
-                        <a className="navbar-brand" href="#"><h4>All Questions</h4></a>
-                    </div>
-                    <button className="btn btn-primary active" onClick={openAskQuestion}>Ask question</button>
-                </nav>
+			<div className="container">
+				<nav className="navbar">
+					<div className="container-fluid">
+						<a className="navbar-brand" href="#">
+							<h1>Tất cả câu hỏi</h1>
+						</a>
+						<button
+							className="btn btn-primary"
+							onClick={openAskQuestion}
+						>
+							Đặt câu hỏi
+						</button>
+					</div>
+				</nav>
 
-                <div className={styles.menu}>
-                    <ul className="nav nav-pills">
-                        <li className="nav-item">
-                            <a className="nav-link active" aria-current="page" href="#">Active</a>
-                        </li>
-                        <li className="nav-item">
-                            <a className="nav-link" href="#">Bountied</a>
-                        </li>
-                        <li className="nav-item">
-                            <a className="nav-link" href="#">Unanswered</a>
-                        </li>
-                        <li className="nav-item dropdown">
-                            <a className="nav-link dropdown-toggle" data-bs-toggle="dropdown" href="#" role="button" aria-expanded="false">More</a>
-                            <ul className="dropdown-menu">
-                                <li><a className="dropdown-item" href="#">Frequent</a></li>
-                                <li><a className="dropdown-item" href="#">Score</a></li>
-                                <li><a className="dropdown-item" href="#">Unanswered (my tags)</a></li>
-                                <li><hr className="dropdown-divider" /></li>
-                                <li><a className="dropdown-item" href="#">Custom filter</a></li>
-                            </ul>
-                        </li>
-                    </ul>
-                </div>
-                <div className={styles["list-question"]}>
-                    {isLoading ? <Loader />
-                        : data.map((obj, index) => {
-                            return (
-                                <div className={styles["preview-question"]} key={index}>
-                                    <div className={styles.title}>{obj.title}</div>
-                                    <div className={styles.content}>{obj.content}</div>
-                                </div>
-                            )
-                        })}
-                </div>
-                
-            </div>
+				<div className="d-flex justify-content-end">
+					<div class="btn-group">
+						<button type="button" class="btn btn-outline-secondary">
+							Mới nhất
+						</button>
+						<button type="button" class="btn btn-outline-secondary">
+							Đang hoạt động
+						</button>
+						<button type="button" class="btn btn-outline-secondary">
+							Được treo thưởng
+						</button>
+						<button type="button" class="btn btn-outline-secondary">
+							Chưa trả lời
+						</button>
+						<button id="btnGroupDrop1" type="button" class="btn btn-outline-secondary dropdown-toggle"
+							aria-expanded="false" data-bs-toggle="dropdown">
+							Thêm
+						</button>
+						<ul class="dropdown-menu" aria-labelledby="btnGroupDrop1">
+							<li>
+								<a class="dropdown-item" href="#">
+									Dropdown link
+								</a>
+							</li>
+							<li>
+								<a class="dropdown-item" href="#">
+									Dropdown link
+								</a>
+							</li>
+						</ul>
+					</div>
+				</div>
 
-
-
-        </div>
-    );
+				<div className={styles["list-question"]}>
+					{isLoading ? (
+						<Loader />
+					) : (
+						data.map((obj) => {
+							return (
+								<div
+									className={styles["preview-question"]}
+									key={obj._id}
+								>
+									<Link to={obj._id} className={styles.title}>
+										{obj.title}
+									</Link>
+									<div className={styles.content}>
+										{obj.content}
+									</div>
+								</div>
+							);
+						})
+					)}
+				</div>
+			</div>
+		</div>
+	);
 }
 
 export default QuestionsPage;

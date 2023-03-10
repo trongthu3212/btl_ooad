@@ -41,14 +41,14 @@ async function handleUserRegister(req, res) {
 }
 
 async function handleUserInfo(req, res) {
-    let username = req.params.username;
-    let userObj = await userModel.findOne({ username: username });
+    let id = req.params.id;
+    let userObj = await userModel.findOne({ _id: id });
 
     if ((userObj == null) || (userObj == undefined)) {
         res.sendStatus(404);
     } else {
-        let readableName = (userObj.name == null) ? userObj.username : userObj.name;
-        res.json({ username: username, readableName: readableName, email: userObj.email, role: userObj.role.NAME, joinTime: userObj._id.getTimestamp() })
+        let userName = (userObj.name == null) ? userObj.username : userObj.name;
+        res.json({ userName: userName, email: userObj.email, role: userObj.role.NAME, joinTime: userObj._id.getTimestamp() })
     }
 }
 
