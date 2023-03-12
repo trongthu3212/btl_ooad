@@ -3,19 +3,19 @@
     min-height: 700px;
     width: 164px;
     padding-top: 24px;
-
     .sidebar-nav {
         width: 164px;
         position: sticky;
-        top: 60px;
+        top: 74px;
+        bottom: 0;
 
         a {
             text-decoration: none;
             display: block;
             height: 35px;
-            padding: 8px 8px 8px 30px;
+            padding: 4px 4px 4px 8px;
             position: relative;
-
+            color: #525960;
             &:hover {
                 color: hsl(210, 8%, 5%);
             }
