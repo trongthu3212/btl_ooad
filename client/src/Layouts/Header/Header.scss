@@ -214,3 +214,13 @@ body {
         @include LoginSignupBtn(#ffffff, #0a95ff);
     }
 }
+
+.btn {
+    height: 32px;
+}
+
+h2.title {
+    font-weight: 400;
+    font-size: 27px;
+    margin: 0;
+}

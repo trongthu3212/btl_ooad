@@ -20,12 +20,31 @@ function QuestionsPage() {
     // Lọc câu hỏi theo trạng thái
     const [state, setState] = useState("newest");
 
-    // Lấy dữ liệu câu hỏi
     useEffect(() => {
-      getAllPosts().then(res => {
-        setData(res);
-        setIsLoading(false);
-      })
+        // Lấy dữ liệu câu hỏi
+        getAllPosts().then(res => {
+            setData(res);
+            setIsLoading(false);
+        })
+        let leftSidebar = document.querySelector(".sidebar-nav");
+        let footer = document.querySelector('.footer');
+
+        window.addEventListener('scroll', handleScroll);
+
+        // Xử lý khi scroll
+        function handleScroll() {
+            let topFooter = footer.getBoundingClientRect().top;
+            let heightFooter = window.innerHeight - topFooter;
+            if (topFooter >= window.innerHeight) {
+                leftSidebar.style.top = '74px';
+            } else {
+                leftSidebar.style.top = 74 - heightFooter + "px";
+            }
+        }
+      
+        return () => {
+            window.removeEventListener("scroll", handleScroll);
+        };
     }, []);
 
     /**
@@ -48,53 +67,51 @@ function QuestionsPage() {
 		<div className={styles["questions-page"]}>
 			<Sidebar />
 
-			<div className="container">
-				<nav className="navbar">
-					<div className="container-fluid">
-						<a className="navbar-brand" href="#">
-							<h1>Tất cả câu hỏi</h1>
-						</a>
-						<button
-							className="btn btn-primary"
-							onClick={openAskQuestion}
-						>
-							Đặt câu hỏi
-						</button>
-					</div>
-				</nav>
-
-				<div className="d-flex justify-content-end">
-					<div class="btn-group">
-						<button type="button" class="btn btn-outline-secondary">
-							Mới nhất
-						</button>
-						<button type="button" class="btn btn-outline-secondary">
-							Đang hoạt động
-						</button>
-						<button type="button" class="btn btn-outline-secondary">
-							Được treo thưởng
-						</button>
-						<button type="button" class="btn btn-outline-secondary">
-							Chưa trả lời
-						</button>
-						<button id="btnGroupDrop1" type="button" class="btn btn-outline-secondary dropdown-toggle"
-							aria-expanded="false" data-bs-toggle="dropdown">
-							Thêm
-						</button>
-						<ul class="dropdown-menu" aria-labelledby="btnGroupDrop1">
-							<li>
-								<a class="dropdown-item" href="#">
-									Dropdown link
-								</a>
-							</li>
-							<li>
-								<a class="dropdown-item" href="#">
-									Dropdown link
-								</a>
-							</li>
-						</ul>
-					</div>
-				</div>
+			<div className={`${styles["main-content"]} flex-fill`}>
+                <div className={styles["header-content"]}>
+                    <div className="d-flex justify-content-between align-items-center">
+                        <h2 className="title">Tất cả câu hỏi</h2>
+                        <button
+                            className="btn btn-primary"
+                            onClick={openAskQuestion}
+                        >
+                            Đặt câu hỏi
+                        </button>
+                    </div>
+    
+                    <div className="d-flex justify-content-end">
+                        <div className="btn-group">
+                            <button type="button" className="btn btn-outline-secondary">
+                                Mới nhất
+                            </button>
+                            <button type="button" className="btn btn-outline-secondary">
+                                Đang hoạt động
+                            </button>
+                            <button type="button" className="btn btn-outline-secondary">
+                                Được treo thưởng
+                            </button>
+                            <button type="button" className="btn btn-outline-secondary">
+                                Chưa trả lời
+                            </button>
+                            <button id="btnGroupDrop1" type="button" className="btn btn-outline-secondary dropdown-toggle"
+                                aria-expanded="false" data-bs-toggle="dropdown">
+                                Thêm
+                            </button>
+                            <ul className="dropdown-menu" aria-labelledby="btnGroupDrop1">
+                                <li>
+                                    <a className="dropdown-item" href="#">
+                                        Dropdown link
+                                    </a>
+                                </li>
+                                <li>
+                                    <a className="dropdown-item" href="#">
+                                        Dropdown link
+                                    </a>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
 
 				<div className={styles["list-question"]}>
 					{isLoading ? (

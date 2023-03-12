@@ -1,0 +1,20 @@
+.question-page {
+    padding-top: 50px;
+    display: flex;
+    .answer{
+        width: 600px;
+    }
+}
+
+.container {
+    padding: 24px;
+}
+
+.header {
+    border-bottom: 1px solid #d3d7de;
+    gap: 8px;
+}
+
+.question-content {
+    padding: 16px;
+}
