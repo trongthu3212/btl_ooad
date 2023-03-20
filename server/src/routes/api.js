@@ -1,5 +1,7 @@
 var routers = require('express').Router();
 var passport = require('passport');
+var multer = require('multer')
+const upload = multer({ dest: 'uploads/' });
 
 var testController = require('../controllers/TestController')
 var userController = require('../controllers/UserController')
@@ -18,7 +20,7 @@ routers.post('/login', [ authEnsurance.ensureLoggedOut, passport.authenticate('l
 routers.post('/logout', authEnsurance.ensureLoggedIn, userController.deauth)
 routers.post('/register', authEnsurance.ensureLoggedOut, userController.register)
 routers.post('/updateRole', authEnsurance.ensureLoggedIn, userController.updateRole)
-routers.post('/setUserInfo', authEnsurance.ensureLoggedIn, userController.setInfo)
+routers.post('/user/update', upload.single('userAvatar'), authEnsurance.ensureLoggedIn, userController.updateInfo)
 routers.post('/addPost', authEnsurance.ensureLoggedIn, postController.add)
 routers.put('/updatePost', authEnsurance.ensureLoggedIn, postController.update)
 routers.delete('/deletePost', authEnsurance.ensureLoggedIn, postController.delete)

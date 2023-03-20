@@ -29,9 +29,11 @@
     "express-session": "^1.17.3",
     "mongoose": "^7.0.0",
     "mongoose-paginate-v2": "^1.7.1",
+    "multer": "^1.4.5-lts.1",
     "node-sass": "^8.0.0",
     "passport": "^0.6.0",
-    "passport-local-mongoose": "git+https://github.com/dtt3212/passport-local-mongoose.git#6f6d29"
+    "passport-local-mongoose": "git+https://github.com/dtt3212/passport-local-mongoose.git#6f6d29",
+    "sharp": "^0.31.3"
   },
   "devDependencies": {
     "nodemon": "^2.0.20"

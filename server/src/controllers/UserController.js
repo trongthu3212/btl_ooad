@@ -1,6 +1,10 @@
 var userModel = require('../models/user')
 var roleConsts = require('../consts/role');
-const { username } = require('../config/db');
+var sharp = require('sharp')
+
+const fs = require('fs')
+const errorCodes = require('../consts/errors')
+const requestUtils = require('../utils/RequestUtils')
 
 function handleUserAuth(req, res) {
     return res.sendStatus(200);
@@ -48,7 +52,15 @@ async function handleUserInfo(req, res) {
         res.sendStatus(404);
     } else {
         let userName = (userObj.name == null) ? userObj.username : userObj.name;
-        res.json({ userName: userName, email: userObj.email, role: userObj.role.NAME, joinTime: userObj._id.getTimestamp() })
+        res.json({ 
+            userName: userName,
+            email: userObj.email,
+            role: userObj.role.NAME,
+            reputation: userObj.reputation,
+            about: userObj.about,
+            avatar: userObj.avatar,
+            joinTime: userObj._id.getTimestamp(),
+        })
     }
 }
 
@@ -90,14 +102,62 @@ async function handleSetUserRole(req, res) {
     }
 }
 
-function handleSetUserInfo(req, res) {
-    let email = req.body.email;
-    let name = req.body.name;
+async function handleUpdateUserProfile(req, res) {
+    let name = req.body.userName;
+    let about = req.body.userAbout;
+    let avatarFile = req.file;
+
+    let avatarBuffer = null;
+
+    if (avatarFile) {
+        const MAX_AVATAR_SIZE = 5 * 1024 * 1024;
+        const MAX_IMAGE_WIDTH = 1024;
+        const MAX_IMAGE_HEIGHT = 1024;
+    
+        if (req.file.size > MAX_AVATAR_SIZE) {
+            fs.unlinkSync(req.file.path)
+
+            res.status(403).json({
+                error: errorCodes.FileTooBig,
+                message: "The uploaded avatar file is too big!"
+            })
+    
+            return;
+        }
+    
+        // Check image size
+        try {
+            let image = sharp(req.file.path);
+            let metadata = await image.metadata();
+    
+            if ((metadata.width > MAX_IMAGE_WIDTH) || (metadata.height > MAX_IMAGE_HEIGHT)) {
+                res.status(403).json({
+                    error: errorCodes.FileDimensionTooBig,
+                    maximumDimension: [ MAX_IMAGE_WIDTH, MAX_IMAGE_HEIGHT ],
+                    message: "The avatar image dimension is too large!"
+                })
+
+                fs.unlinkSync(req.file.path);
+                return;
+            }
+        } catch (err) {
+            res.status(403).json({
+                error: errorCodes.FileCorrupted,
+                message: err
+            })
+
+            fs.unlinkSync(req.file.path);
+            return;
+        }
+
+        avatarBuffer = await requestUtils.requestFileToBase64(avatarFile)
+    }
 
     userModel.updateOne({ _id: req.user._id }, {
         $set: {
-            email: email,
-            name: name
+            username: name,
+            about: about,
+            avatar: avatarBuffer
         }
     })
         .then(user => res.sendStatus(200))
@@ -119,5 +179,5 @@ module.exports = {
     currentInfo: handleCurrentUserInfo,
     emailExisted: handleUserCheckEmailExists,
     updateRole: handleSetUserRole,
-    setInfo: handleSetUserInfo,
+    updateInfo: handleUpdateUserProfile,
 }

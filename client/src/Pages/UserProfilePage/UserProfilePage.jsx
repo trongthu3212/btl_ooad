@@ -4,30 +4,103 @@ import Sidebar from "../../Layouts/Sidebar/Sidebar";
 import { Link } from "react-router-dom";
 import { useParams } from "react-router-dom";
 import { getUser, updateProfile } from "../../Api/user-api";
+import { ErrorCodes } from "Api/errors";
+
 import "./UserProfilePage.scss";
+import DefaultAvatar from "Assets/DefaultAvatar.jfif"
+
+const MaxAvatarFileSize = 5 * 1024 * 1024;
 
 function UserProfilePage() {
     const { idUser } = useParams();
     const { auth } = useContext(AuthContext);
     const [user, setUser] = useState({});
     const [userAvatar, setUserAvatar] = useState("");
+    const [userAvatarPreview, setUserAvatarPreview] = useState();
     const [userName, setUserName] = useState("");
     const [userAbout, setUserAbout] = useState("");
     const [viewEdit, setViewEdit] = useState(false);
 
     useEffect(() => {
+        updateUserInfo();
+    });
+
+    useEffect(() => {
+        if (!userAvatar) {
+            setUserAvatarPreview(null);
+            return;
+        }
+
+        const avatarUrl = URL.createObjectURL(userAvatar)
+        setUserAvatarPreview(avatarUrl)
+
+        return () => URL.revokeObjectURL(avatarUrl)
+    }, [userAvatar])
+    
+    useEffect(() => {
+        if (!viewEdit) {
+            setUserAvatarPreview(null);
+            return;
+        }
+    }, [viewEdit]);
+
+    function updateUserInfo() {
         getUser(idUser).then((res) => {
+            setUserName(res.userName);
+            setUserAbout(res.about);
+
             setUser(res);
         });
-    }, []);
+    }
 
-    function handleSubmit() {
+    function handleUserAvatarFileChange(file) {
+        if (file && file.size > MaxAvatarFileSize) {
+            alert(`Dung lượng tệp tin avatar phải nhỏ hơn ${MaxAvatarFileSize / 1024 / 1024}MB!`)
+        } else {
+            setUserAvatar(file);
+        }
+    }
+
+    async function handleSubmit(event) {
+        event.preventDefault();
+
         const profileUploaded = {
             userAvatar: userAvatar,
             userName: userName,
-            userAbout: userAbout,
+            userAbout: userAbout ?? '',
         };
-        updateProfile(profileUploaded).then((res) => alert(res));
+
+        await updateProfile(profileUploaded)
+            .then(_ => {
+                updateUserInfo();
+            })
+            .catch(err => {
+                if (err.response) {
+                    let errorCode = err.response.data.error;
+                    switch (errorCode) {
+                        case ErrorCodes.FileCorrupted:
+                            alert("Tệp avatar tải lên không phải là ảnh hoặc đã bị hỏng1");
+                            break;
+
+                        case ErrorCodes.FileDimensionTooBig: {
+                            const [maxSizeX, maxSizeY] = err.response.data.maximumDimension;
+                            alert(`Tệp tải lên có chiều dài hoặc rộng vượt quá cho phép (${maxSizeX}x${maxSizeY})!`);
+                            break;
+                        }
+
+                        case ErrorCodes.FileTooBig: {
+                            alert("Tệp avatar cần tải lên có kích thước quá to!");
+                            break;
+                        }
+
+                        default:
+                            alert(err.response.data.message);
+                            break;
+                    }
+                } else {
+                    alert("Sửa đổi đã được ghi nhận!");
+                }
+            });
     }
 
     return (
@@ -35,8 +108,8 @@ function UserProfilePage() {
             <Sidebar />
             <div className="user-profile">
                 <div className="profile__header">
-                    <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/a/a7/React-icon.svg/1200px-React-icon.svg.png"></img>
-                    <h1>{user?.userName}</h1>
+                    <img src={(viewEdit && userAvatarPreview) ? userAvatarPreview : (user.avatar ?? DefaultAvatar)}></img>
+                    <h1 className="username-label">{user?.userName}</h1>
                     {idUser === auth.id && (
                         <div
                             className="edit-profile-btn"
@@ -51,11 +124,9 @@ function UserProfilePage() {
                 {viewEdit ? (
                     <div className="profile__edit">
                         <form onSubmit={handleSubmit}>
-                            <span>Avatar</span>{" "}
                             <input
                                 type="file"
-                                value={userAvatar}
-                                onChange={(e) => setUserAvatar(e.target.files[0])}></input>
+                                onChange={(e) => handleUserAvatarFileChange(e.target.files[0])}></input>
                             <span>Name</span>{" "}
                             <input
                                 type="text"
@@ -72,11 +143,11 @@ function UserProfilePage() {
                 ) : (
                     <div className="profile__content">
                         <div className="content__reputation">
-                            Reputation <span>{user?.reputation}</span>
+                            Reputation <span>{user?.reputation ?? 0}</span>
                         </div>
                         <div className="content__about">
                             About
-                            <span>{user?.about}</span>
+                            <span>{(user?.about && user?.about.length !== 0) ? user?.about : "Người dùng này chưa điền thông tin về mình."}</span>
                         </div>
                         <div className="content__recent-question">
                             Recent Questions

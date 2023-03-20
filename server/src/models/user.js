@@ -17,7 +17,13 @@ var userSchema = mongoose.Schema({
     role: {
         type: String,
         required: true
-    }
+    },
+    reputation: {
+        type: Number,
+        default: 0
+    },
+    about: String,
+    avatar: String
 }, {
     timestamps: true
 })

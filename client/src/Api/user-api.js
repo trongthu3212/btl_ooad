@@ -1,4 +1,5 @@
 import axios from "axios";
+import FormData from "form-data";
 
 export const login = async (email, password) => {
     const payload = new URLSearchParams({
@@ -48,16 +49,16 @@ export const getUser = async (idUser) => {
 };
 
 export const updateProfile = async (profileUploaded) => {
-    const payload = new URLSearchParams({
-        ...profileUploaded,
-        file: profileUploaded.userAvatar,
+    const payload = new FormData();
+    payload.append("userAvatar", profileUploaded.userAvatar);
+    payload.append("userName", profileUploaded.userName);
+    payload.append("userAbout", profileUploaded.userAbout);
+
+    const { data } = await axios.post("/user/update", payload, {
+        transformRequest: () => payload
     });
 
-    try {
-        return "OK";
-    } catch (error) {
-        console.log(error);
-    }
+    return data;
 };
 
 export const getCurrentUser = async () => {
