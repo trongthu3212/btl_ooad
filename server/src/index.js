@@ -28,6 +28,13 @@ function connectToDb() {
   }
   );
   
+  mongoose.set('toJSON', {
+    virtuals: true,
+    transform: (doc, converted) => {
+      delete converted._id;
+    }
+  });
+  
   const db = mongoose.connection;
   db.on('error', console.error.bind(console, 'Connection error: '));
   db.once('open', function() { console.log('Database successfully connected!') });

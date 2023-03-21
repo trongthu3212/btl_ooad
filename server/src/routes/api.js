@@ -7,6 +7,7 @@ var testController = require('../controllers/TestController')
 var userController = require('../controllers/UserController')
 const authEnsurance = require('../middleware/AuthEnsurance')
 var postController = require('../controllers/PostController')
+var courseController = require('../controllers/CourseController')
 
 routers.get('/test', testController.execute)
 routers.get('/emailExisted', userController.emailExisted)
@@ -24,5 +25,7 @@ routers.post('/user/update', upload.single('userAvatar'), authEnsurance.ensureLo
 routers.post('/addPost', authEnsurance.ensureLoggedIn, postController.add)
 routers.put('/updatePost', authEnsurance.ensureLoggedIn, postController.update)
 routers.delete('/deletePost', authEnsurance.ensureLoggedIn, postController.delete)
+
+routers.post('/course/create', authEnsurance.ensureLoggedIn, courseController.addCourse)
 
 module.exports = routers;

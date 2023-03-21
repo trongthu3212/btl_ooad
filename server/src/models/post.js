@@ -10,8 +10,14 @@ var postSchema = mongoose.Schema({
         type: String,
         required: true
     },
+    score: {
+        type: Number,
+        required: true,
+        default: 0
+    },
     shortDescription: String,
-    author: { type: mongoose.Schema.Types.ObjectId, ref: 'user' } 
+    author: { type: mongoose.Schema.Types.ObjectId, ref: 'user' },
+    course: { type: mongoose.Schema.Types.ObjectId, ref: 'course' }
 } , {
     timestamps: true
 })

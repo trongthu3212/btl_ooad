@@ -1,9 +1,22 @@
 var postModel = require('../models/post');
 var postConfig = require('../config/post')
 
+const postPopulators = [
+    { path: 'author', select: 'username name' },
+    { path: 'course', select: 'name code' }
+]
+
 async function addPost(req, res) {  
     let title = req.body.title;
     let content = req.body.content;
+    let courseId = req.body.courseId;
+
+    if (!courseId) {
+        res.status(403).json({
+            message: "No course ID is provided!"
+        })
+    }
+
     let shortDescription = content.substr(0, postConfig.maxShortDescriptionLength)
     shortDescription = shortDescription.replace(/[\r\n]+/g, ' ')
 
@@ -13,7 +26,8 @@ async function addPost(req, res) {
         title: title,
         content: content,
         shortDescription: shortDescription,
-        author: req.user._id
+        author: req.user._id,
+        course: courseId
     });
 
     await post.save()
@@ -34,8 +48,8 @@ async function listPosts(req, res) {
         let options = {
             offset: page * postPerPage,
             limit: postPerPage,
-            select: 'title shortDescription author _id',
-            populate: { path: 'author', select: 'username name' },
+            select: 'title shortDescription author score course _id',
+            populate: postPopulators,
             sort: { _id: 'desc' }       // Id compare by creation date!
         }
     
@@ -47,7 +61,7 @@ async function listPosts(req, res) {
 
 async function getPost(req, res) {
     let {idquestion} = req.params;
-    let post = await postModel.findById(idquestion).populate({ path: 'author', select: 'username name' });
+    let post = await postModel.findById(idquestion).populate(postPopulators);
 
     if ((post == null) || (post == undefined)) {
         res.status(404);
