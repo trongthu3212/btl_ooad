@@ -8,6 +8,8 @@ var userController = require('../controllers/UserController')
 const authEnsurance = require('../middleware/AuthEnsurance')
 var postController = require('../controllers/PostController')
 var courseController = require('../controllers/CourseController')
+var commentController = require('../controllers/CommentController')
+var answerController = require('../controllers/AnswerController')
 
 routers.get('/test', testController.execute)
 routers.get('/emailExisted', userController.emailExisted)
@@ -27,5 +29,7 @@ routers.put('/updatePost', authEnsurance.ensureLoggedIn, postController.update)
 routers.delete('/deletePost', authEnsurance.ensureLoggedIn, postController.delete)
 
 routers.post('/course/create', authEnsurance.ensureLoggedIn, courseController.addCourse)
+routers.post('/answer/add', authEnsurance.ensureLoggedIn, answerController.addAnswer)
+routers.post('/comment/add', authEnsurance.ensureLoggedIn, commentController.addComment)
 
 module.exports = routers;

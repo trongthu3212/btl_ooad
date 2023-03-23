@@ -1,5 +1,6 @@
 var postModel = require('../models/post');
-var postConfig = require('../config/post')
+var postConfig = require('../config/post');
+var answerModel = require('../models/answer');
 
 const postPopulators = [
     { path: 'author', select: 'username name' },
@@ -52,21 +53,28 @@ async function listPosts(req, res) {
             populate: postPopulators,
             sort: { _id: 'desc' }       // Id compare by creation date!
         }
+
+        const globalPostCount = await postModel.estimatedDocumentCount()
     
         await postModel.paginate({}, options)
-            .then(post => res.json(post.docs) )
+            .then(post => res.json({ posts: post.docs, globalPostCount: globalPostCount }) )
             .catch(err => res.status(500).json(err));
     }
 }
 
 async function getPost(req, res) {
     let {idquestion} = req.params;
-    let post = await postModel.findById(idquestion).populate(postPopulators);
+    let post = await postModel.findById(idquestion).populate(postPopulators).lean();
 
     if ((post == null) || (post == undefined)) {
         res.status(404);
     } else {
-        res.json(post);
+        await answerModel.find({ post: idquestion })
+            .then(answers => {
+                post.answers = answers;
+                res.json(post);
+            })
+            .catch(err => res.status(500).json(err));
     }
 }
 
