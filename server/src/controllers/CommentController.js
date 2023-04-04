@@ -1,4 +1,5 @@
 var commentModel = require('../models/comment');
+var commonPopulators = require('./CommonPopulators')
 
 async function addComment(req, res) {
     let postId = req.body.postId
@@ -32,6 +33,33 @@ async function addComment(req, res) {
         .catch(err => { res.json({ error: err })});
 }
 
+async function listComment(req, res) {
+    let postId = req.query.postId
+    let answerId = req.query.answerId
+
+    if (!postId && !answerId) {
+        res.status(403).json({
+            message: "Answer ID and post ID are all empty!"
+        });
+
+        return;
+    }
+
+    let findVar = {}
+
+    if (postId) {
+        findVar.post = postId;
+    } else {
+        findVar.answer = answerId;
+    }
+
+    await commentModel.find(findVar)
+        .populate(commonPopulators.commentPopulators)
+        .then(comments => res.json(comments))
+        .catch(err => res.status(500).json({ error: err }))
+}
+
 module.exports = {
-    addComment: addComment
+    addComment: addComment,
+    listComment: listComment
 }

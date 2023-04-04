@@ -31,5 +31,6 @@ routers.delete('/deletePost', authEnsurance.ensureLoggedIn, postController.delet
 routers.post('/course/create', authEnsurance.ensureLoggedIn, courseController.addCourse)
 routers.post('/answer/add', authEnsurance.ensureLoggedIn, answerController.addAnswer)
 routers.post('/comment/add', authEnsurance.ensureLoggedIn, commentController.addComment)
+routers.get('/comment/list', commentController.listComment)
 
 module.exports = routers;

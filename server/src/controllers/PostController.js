@@ -1,11 +1,7 @@
 var postModel = require('../models/post');
 var postConfig = require('../config/post');
 var answerModel = require('../models/answer');
-
-const postPopulators = [
-    { path: 'author', select: 'username name' },
-    { path: 'course', select: 'name code' }
-]
+var commonPopulators = require('./CommonPopulators')
 
 async function addPost(req, res) {  
     let title = req.body.title;
@@ -50,7 +46,7 @@ async function listPosts(req, res) {
             offset: page * postPerPage,
             limit: postPerPage,
             select: 'title shortDescription author score course _id',
-            populate: postPopulators,
+            populate: commonPopulators.postPopulators,
             sort: { _id: 'desc' }       // Id compare by creation date!
         }
 
@@ -64,12 +60,13 @@ async function listPosts(req, res) {
 
 async function getPost(req, res) {
     let {idquestion} = req.params;
-    let post = await postModel.findById(idquestion).populate(postPopulators).lean();
+    let post = await postModel.findById(idquestion).populate(commonPopulators.postPopulators).lean();
 
     if ((post == null) || (post == undefined)) {
         res.status(404);
     } else {
         await answerModel.find({ post: idquestion })
+            .populate(commonPopulators.answerPopulators)
             .then(answers => {
                 post.answers = answers;
                 res.json(post);
