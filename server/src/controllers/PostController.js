@@ -91,6 +91,8 @@ async function updatePost(req, res) {
         res.sendStatus(404);
     } else {
         if ((req.user.role.EDIT_ANY == true) || (req.user._id.equals(obj.author))) {
+            delete req.body.view;
+
             postModel.updateOne({ _id: req.query._id}, req.body)
                 .then(post => { res.sendStatus(200) })
                 .catch(err => { res.json({ error: err })});
@@ -115,6 +117,24 @@ async function deletePost(req, res) {
     }
 }
 
+async function increasePostView(req, res) {
+    let obj = await postModel.findById(req.body._id);
+    if ((obj == undefined) || (obj == null)) {
+        res.sendStatus(404);
+    } else {
+        if ((req.user.role.EDIT_ANY == true) || (req.user._id.equals(obj.author))) {
+            let viewObj = {}
+            viewObj.view = (obj.view ?? 0) + 1;
+
+            postModel.updateOne({ _id: req.body._id}, viewObj)
+                .then(post => { res.sendStatus(200) })
+                .catch(err => { res.json({ error: err })});
+        } else {
+            res.sendStatus(401);
+        }
+    }
+}
+
 module.exports = {
     add: addPost,
     list: listPosts,
@@ -122,4 +142,5 @@ module.exports = {
     getAll: getAllPosts,
     update: updatePost,
     delete: deletePost,
+    increaseView: increasePostView
 }
