@@ -28,14 +28,14 @@ function Header() {
 
     return (
         <div className="header">
-            <Link to={"/"}>
+            <Link to={"/"} className="h-100 d-flex align-items-center justify-content-center">
                 <div className="header__logo"></div>
             </Link>
 
-            <div className="header__about">
+            <div className="header__about d-flex align-items-center">
                 <Link to="/questions">Questions</Link>
             </div>
-            <div className="header__search">
+            <div className="header__search  d-flex align-items-center">
                 <svg fill="#525960" width="18" height="18">
                     <path d="m18 16.5-5.14-5.18h-.35a7 7 0 1 0-1.19 1.19v.35L16.5 18l1.5-1.5ZM12 7A5 5 0 1 1 2 7a5 5 0 0 1 10 0Z" />
                 </svg>
@@ -53,11 +53,11 @@ function Header() {
                 </React.Fragment>
             ) : (
                 <React.Fragment>
-                    <div className="header__login" onClick={handleLoginBtn}>
+                    <div className="header__login  d-flex align-items-center" onClick={handleLoginBtn}>
                         Log in
                     </div>
 
-                    <div className="header__signup">
+                    <div className="header__signup  d-flex align-items-center">
                         <a href="/users/signup">Sign up</a>
                     </div>
                 </React.Fragment>

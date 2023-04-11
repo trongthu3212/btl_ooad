@@ -12,12 +12,19 @@
         a {
             text-decoration: none;
             display: block;
-            height: 35px;
-            padding: 4px 4px 4px 8px;
+            height: 33px;
+            line-height: 2;
+            padding: 4px 4px 4px 30px;
             position: relative;
+            display: flex;
+            align-items: center;
+            gap: 4px;
             color: #525960;
             &:hover {
                 color: hsl(210, 8%, 5%);
+            }
+            &:nth-child(3), &:first-child {
+                padding-left: 8px;
             }
         }
 

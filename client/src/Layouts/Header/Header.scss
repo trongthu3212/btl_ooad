@@ -71,8 +71,6 @@ body {
         }
 
         .header__logo {
-            margin-top: 10px;
-            margin-left: 10px;
             height: 30px;
             width: 150px;
             background-position: 0 -500px;
@@ -89,8 +87,7 @@ body {
             text-decoration: none;
         }
 
-        &:hover {
-            cursor: pointer;
+        &:hover {cursor: pointer;
             background-color: rgb(211, 211, 211);
         }
     }
@@ -120,11 +117,12 @@ body {
 
     .header__login {
         @include LoginSignupBtn(#39739d, #e1ecf4);
+        height: 32px;
     }
 
     .header__signup {
         @include LoginSignupBtn(#ffffff, #0a95ff);
-
+        height: 32px;
         a {
             text-decoration: none;
             color: white;
@@ -223,4 +221,14 @@ h2.title {
     font-weight: 400;
     font-size: 27px;
     margin: 0;
+}
+
+@media only screen and (min-width: 1366px) {
+    .header {
+        padding: 0 120px;
+    }
+}
+
+.text-blur {
+    color: #6a737c;
 }

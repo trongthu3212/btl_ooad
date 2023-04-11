@@ -6,6 +6,12 @@
     }
 }
 
+@media only screen and (min-width: 1366px) {
+    .question-page {
+        padding: 50px 120px 0;
+    }
+}
+
 .container {
     padding: 24px;
 }
@@ -17,4 +23,9 @@
 
 .question-content {
     padding: 16px;
+}
+
+.btnAskQuestion {
+    padding: 10.4px;
+    background-color: #0a95ff;
 }

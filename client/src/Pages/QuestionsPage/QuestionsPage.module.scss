@@ -3,6 +3,12 @@
     display: flex;
 }
 
+@media only screen and (min-width: 1366px) {
+    .questions-page {
+        padding: 50px 120px 0;
+    }
+}
+
 .menu {
     height: 56px;
     display: flex;

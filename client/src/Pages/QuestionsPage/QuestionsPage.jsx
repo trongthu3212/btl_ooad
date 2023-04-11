@@ -121,9 +121,9 @@ function QuestionsPage() {
 							return (
 								<div
 									className={styles["preview-question"]}
-									key={obj._id}
+									key={obj.id}
 								>
-									<Link to={obj._id} className={styles.title}>
+									<Link to={obj.id} className={styles.title}>
 										{obj.title}
 									</Link>
 									<div className={styles.content}>
