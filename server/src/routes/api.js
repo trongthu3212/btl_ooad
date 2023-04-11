@@ -26,10 +26,12 @@ routers.post('/updateRole', authEnsurance.ensureLoggedIn, userController.updateR
 routers.post('/user/update', upload.single('userAvatar'), authEnsurance.ensureLoggedIn, userController.updateInfo)
 routers.post('/addPost', authEnsurance.ensureLoggedIn, postController.add)
 routers.put('/updatePost', authEnsurance.ensureLoggedIn, postController.update)
+routers.put('/post/increaseView', authEnsurance.ensureLoggedIn, postController.increaseView)
 routers.delete('/deletePost', authEnsurance.ensureLoggedIn, postController.delete)
 
 routers.post('/course/create', authEnsurance.ensureLoggedIn, courseController.addCourse)
 routers.post('/answer/add', authEnsurance.ensureLoggedIn, answerController.addAnswer)
 routers.post('/comment/add', authEnsurance.ensureLoggedIn, commentController.addComment)
+routers.get('/comment/list', commentController.listComment)
 
 module.exports = routers;

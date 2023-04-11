@@ -1,11 +1,7 @@
 var postModel = require('../models/post');
 var postConfig = require('../config/post');
 var answerModel = require('../models/answer');
-
-const postPopulators = [
-    { path: 'author', select: 'username name' },
-    { path: 'course', select: 'name code' }
-]
+var commonPopulators = require('./CommonPopulators')
 
 async function addPost(req, res) {  
     let title = req.body.title;
@@ -50,7 +46,7 @@ async function listPosts(req, res) {
             offset: page * postPerPage,
             limit: postPerPage,
             select: 'title shortDescription author score course _id',
-            populate: postPopulators,
+            populate: commonPopulators.postPopulators,
             sort: { _id: 'desc' }       // Id compare by creation date!
         }
 
@@ -64,12 +60,13 @@ async function listPosts(req, res) {
 
 async function getPost(req, res) {
     let {idquestion} = req.params;
-    let post = await postModel.findById(idquestion).populate(postPopulators).lean();
+    let post = await postModel.findById(idquestion).populate(commonPopulators.postPopulators).lean();
 
     if ((post == null) || (post == undefined)) {
         res.status(404);
     } else {
         await answerModel.find({ post: idquestion })
+            .populate(commonPopulators.answerPopulators)
             .then(answers => {
                 post.answers = answers;
                 res.json(post);
@@ -94,6 +91,8 @@ async function updatePost(req, res) {
         res.sendStatus(404);
     } else {
         if ((req.user.role.EDIT_ANY == true) || (req.user._id.equals(obj.author))) {
+            delete req.body.view;
+
             postModel.updateOne({ _id: req.query._id}, req.body)
                 .then(post => { res.sendStatus(200) })
                 .catch(err => { res.json({ error: err })});
@@ -118,6 +117,24 @@ async function deletePost(req, res) {
     }
 }
 
+async function increasePostView(req, res) {
+    let obj = await postModel.findById(req.body._id);
+    if ((obj == undefined) || (obj == null)) {
+        res.sendStatus(404);
+    } else {
+        if ((req.user.role.EDIT_ANY == true) || (req.user._id.equals(obj.author))) {
+            let viewObj = {}
+            viewObj.view = (obj.view ?? 0) + 1;
+
+            postModel.updateOne({ _id: req.body._id}, viewObj)
+                .then(post => { res.sendStatus(200) })
+                .catch(err => { res.json({ error: err })});
+        } else {
+            res.sendStatus(401);
+        }
+    }
+}
+
 module.exports = {
     add: addPost,
     list: listPosts,
@@ -125,4 +142,5 @@ module.exports = {
     getAll: getAllPosts,
     update: updatePost,
     delete: deletePost,
+    increaseView: increasePostView
 }

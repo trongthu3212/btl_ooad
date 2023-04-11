@@ -56,3 +56,16 @@ export const updatePost = async (post) => {
         console.log(error);
     }
 };
+
+export const increasePostView = async (idQuestion) => {
+    const payload = new URLSearchParams({
+        _id: idQuestion,
+    });
+
+    try {
+        const { data } = await axios.put("post/increaseView", payload);
+        return data;
+    } catch (error) {
+        console.log(error);
+    }
+};
