@@ -89,13 +89,34 @@ function QuestionPage() {
                         <div className="d-flex justify-content-start mb-1 gap-3">
                             <div><span className="text-blur">Thời gian hỏi</span> <span>{convertDate(askedTime)}</span></div>
                             <div><span className="text-blur">Thời gian chỉnh sửa</span> <span></span></div>
-                            <div><span className="text-blur">Đã xem</span> <span></span></div>
+                            <div><span className="text-blur">Lượt xem</span> <span></span></div>
                         </div>
                         <div></div>
                     </div>
                     <div className={styles["question-content"]}>
-                        {question ? question.content
-                            : <Skeleton animation="wave" variant="rounded" width="100%" height={600} /> }
+                        <div className={styles.voteSection}>
+                            <button className={styles.btnVote}>
+                                <svg aria-hidden="true" class="svg-icon iconArrowUpLg" width="36" height="36" viewBox="0 0 36 36"><path d="M2 25h32L18 9 2 25Z"></path></svg>
+                            </button>
+                            <div className={styles.voteCount}>0</div>
+                            <button className={styles.btnVote}>
+                                <svg aria-hidden="true" class="svg-icon iconArrowDownLg" width="36" height="36" viewBox="0 0 36 36"><path d="M2 11h32L18 27 2 11Z"></path></svg>
+                            </button>
+                        </div>
+                        <div className={`${styles.questionDetail} flex-grow-1`}>
+                            <div className={styles.content}>
+                                {question ? question.content
+                                    : <Skeleton animation="wave" variant="rounded" width="100%" height={600} /> }
+                            </div>
+                            <div className={styles.userInfo}>
+                                <img src="" alt="" width={32} height={32} className={styles.avatar} />
+                                <div className={styles.userDetail}>
+                                    <a href="">{question?.author.username}</a>
+                                    <div className={styles.reputationScore}></div>
+                                </div>
+                            </div>
+                            <div className={styles.commentSection}></div>
+                        </div>
                     </div>
 				</div>
 			</div>

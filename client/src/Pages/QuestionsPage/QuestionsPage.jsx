@@ -72,7 +72,7 @@ function QuestionsPage() {
                     <div className="d-flex justify-content-between align-items-center">
                         <h2 className="title">Tất cả câu hỏi</h2>
                         <button
-                            className="btn btn-primary"
+                            className={`btn btn-primary d-flex align-items-center ${styles.btnAskQuestion}`}
                             onClick={openAskQuestion}
                         >
                             Đặt câu hỏi
@@ -85,30 +85,8 @@ function QuestionsPage() {
                                 Mới nhất
                             </button>
                             <button type="button" className="btn btn-outline-secondary">
-                                Đang hoạt động
-                            </button>
-                            <button type="button" className="btn btn-outline-secondary">
-                                Được treo thưởng
-                            </button>
-                            <button type="button" className="btn btn-outline-secondary">
                                 Chưa trả lời
                             </button>
-                            <button id="btnGroupDrop1" type="button" className="btn btn-outline-secondary dropdown-toggle"
-                                aria-expanded="false" data-bs-toggle="dropdown">
-                                Thêm
-                            </button>
-                            <ul className="dropdown-menu" aria-labelledby="btnGroupDrop1">
-                                <li>
-                                    <a className="dropdown-item" href="#">
-                                        Dropdown link
-                                    </a>
-                                </li>
-                                <li>
-                                    <a className="dropdown-item" href="#">
-                                        Dropdown link
-                                    </a>
-                                </li>
-                            </ul>
                         </div>
                     </div>
                 </div>
