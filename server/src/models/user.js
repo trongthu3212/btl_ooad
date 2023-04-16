@@ -1,6 +1,7 @@
 var mongoose = require('mongoose');
 var passportLocalMongoose = require('passport-local-mongoose')
 var roleConsts = require('../consts/role')
+const mongooseLeanVirtual = require('mongoose-lean-virtuals')
 
 var userSchema = mongoose.Schema({
     username: {
@@ -28,7 +29,9 @@ var userSchema = mongoose.Schema({
     timestamps: true
 })
 
-userSchema.plugin(passportLocalMongoose, {usernameField: "email"});
+userSchema.plugin(passportLocalMongoose, { usernameField: "email" });
+userSchema.plugin(mongooseLeanVirtual)
+
 userSchema.post(['find', 'findOne', 'getById'], result => {
     if ((result == undefined) || (result == null)) {
         return result;

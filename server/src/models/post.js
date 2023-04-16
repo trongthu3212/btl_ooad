@@ -1,5 +1,6 @@
 var mongoose = require("mongoose");
 var mongoosePagination = require("mongoose-paginate-v2")
+const mongooseLeanVirtual = require('mongoose-lean-virtuals')
 
 var postSchema = mongoose.Schema({
     title: {
@@ -9,11 +10,6 @@ var postSchema = mongoose.Schema({
     content: {
         type: String,
         required: true
-    },
-    score: {
-        type: Number,
-        required: true,
-        default: 0
     },
     view: {
         type: Number,
@@ -28,5 +24,6 @@ var postSchema = mongoose.Schema({
 })
 
 postSchema.plugin(mongoosePagination)
+postSchema.plugin(mongooseLeanVirtual)
 
 module.exports = mongoose.model("post", postSchema);

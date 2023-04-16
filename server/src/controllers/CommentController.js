@@ -1,5 +1,7 @@
 var commentModel = require('../models/comment');
-var commonPopulators = require('./CommonPopulators')
+var commonPopulators = require('./CommonPopulators');
+const VoteController = require('./VoteController');
+var voteController = require('./VoteController')
 
 async function addComment(req, res) {
     let postId = req.body.postId
@@ -55,7 +57,15 @@ async function listComment(req, res) {
 
     await commentModel.find(findVar)
         .populate(commonPopulators.commentPopulators)
-        .then(comments => res.json(comments))
+        .lean({ virtuals: true })
+        .then(async comments => {
+            comments = await Promise.all(comments.map(async comment => {
+                comment.score = await VoteController.getCommentVote(comment._id)
+                return comment
+            }))
+
+            res.json(comments)
+        })
         .catch(err => res.status(500).json({ error: err }))
 }
 

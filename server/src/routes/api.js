@@ -9,7 +9,8 @@ const authEnsurance = require('../middleware/AuthEnsurance')
 var postController = require('../controllers/PostController')
 var courseController = require('../controllers/CourseController')
 var commentController = require('../controllers/CommentController')
-var answerController = require('../controllers/AnswerController')
+var answerController = require('../controllers/AnswerController');
+const VoteController = require('../controllers/VoteController');
 
 routers.get('/test', testController.execute)
 routers.get('/emailExisted', userController.emailExisted)
@@ -33,5 +34,21 @@ routers.post('/course/create', authEnsurance.ensureLoggedIn, courseController.ad
 routers.post('/answer/add', authEnsurance.ensureLoggedIn, answerController.addAnswer)
 routers.post('/comment/add', authEnsurance.ensureLoggedIn, commentController.addComment)
 routers.get('/comment/list', commentController.listComment)
+
+routers.get('/post/totalVote/:id', VoteController.getPostTotalVote)
+routers.get('/answer/totalVote/:id', VoteController.getAnswerTotalVote)
+routers.get('/comment/totalVote/:id', VoteController.getCommentTotalVote)
+
+routers.get('/post/getCurrentUserVote/:id', authEnsurance.ensureLoggedIn, VoteController.getCurrentUserPostVote)
+routers.get('/answer/getCurrentUserVote/:id', authEnsurance.ensureLoggedIn, VoteController.getCurrentUserAnswerVote)
+routers.get('/comment/getCurrentUserVote/:id', authEnsurance.ensureLoggedIn, VoteController.getCurrentUserCommentVote)
+
+routers.post('/post/upvote/:id', authEnsurance.ensureLoggedIn, VoteController.upvotePost)
+routers.post('/post/downvote/:id', authEnsurance.ensureLoggedIn, VoteController.downvotePost)
+routers.post('/answer/upvote/:id', authEnsurance.ensureLoggedIn, VoteController.upvoteAnswer)
+routers.post('/answer/downvote/:id', authEnsurance.ensureLoggedIn, VoteController.downvoteAnswer)
+routers.post('/comment/upvote/:id', authEnsurance.ensureLoggedIn, VoteController.upvoteComment)
+routers.post('/comment/downvote/:id', authEnsurance.ensureLoggedIn, VoteController.downvoteComment)
+
 
 module.exports = routers;

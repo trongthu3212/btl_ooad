@@ -1,7 +1,8 @@
 var postModel = require('../models/post');
 var postConfig = require('../config/post');
 var answerModel = require('../models/answer');
-var commonPopulators = require('./CommonPopulators')
+var commonPopulators = require('./CommonPopulators');
+const VoteController = require('./VoteController');
 
 async function addPost(req, res) {  
     let title = req.body.title;
@@ -45,38 +46,55 @@ async function listPosts(req, res) {
         let options = {
             offset: page * postPerPage,
             limit: postPerPage,
-            select: 'title shortDescription author score course _id',
+            select: 'title shortDescription author course',
             populate: commonPopulators.postPopulators,
+            lean: true,
             sort: { _id: 'desc' }       // Id compare by creation date!
         }
 
         const globalPostCount = await postModel.estimatedDocumentCount()
     
         await postModel.paginate({}, options)
-            .then(post => res.json({ posts: post.docs, globalPostCount: globalPostCount }) )
+            .then(async post => {
+                post.docs = await Promise.all(post.docs.map(async post => {
+                    post.score = await VoteController.getPostVote(post._id);
+                    return post;
+                }))
+                res.json({ posts: post.docs, globalPostCount: globalPostCount })
+            } )
             .catch(err => res.status(500).json(err));
     }
 }
 
 async function getPost(req, res) {
     let {idquestion} = req.params;
-    let post = await postModel.findById(idquestion).populate(commonPopulators.postPopulators).lean();
+    let post = await postModel.findById(idquestion)
+        .populate(commonPopulators.postPopulators)
+        .lean({ virtuals: true });
 
     if ((post == null) || (post == undefined)) {
         res.status(404);
     } else {
+        post.score = await VoteController.getPostVote(idquestion)
+
         await answerModel.find({ post: idquestion })
             .populate(commonPopulators.answerPopulators)
-            .then(answers => {
-                post.answers = answers;
+            .lean({ virtuals: true })
+            .then(async answers => {
+                post.answers = await Promise.all(answers.map(async answer => {
+                    answer.score = await VoteController.getAnswerVote(answer._id);
+                    return answer;
+                }));
+
                 res.json(post);
             })
-            .catch(err => res.status(500).json(err));
+            .catch(err => res.status(500).json({ error: err }));
     }
 }
 
 async function getAllPosts(req, res) {
-    let posts = await postModel.find();
+    let posts = await postModel.find().lean({ virtuals: true });
+    posts = await Promise.all(posts.map(async post => post.score = await VoteController.getPostVote(post._id)))
 
     if (!posts) {
         res.status(404);
