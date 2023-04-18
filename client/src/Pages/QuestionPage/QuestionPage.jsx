@@ -106,7 +106,16 @@ function QuestionPage() {
                         <div className={`${styles.questionDetail} flex-grow-1`}>
                             <div className={styles.content}>
                                 {question ? question.content
-                                    : <Skeleton animation="wave" variant="rounded" width="100%" height={600} /> }
+                                    : <>
+                                        <Skeleton animation="wave" variant="rounded" width="100%" />
+                                        <Skeleton animation="wave" variant="rounded" width="80%" />
+                                        <Skeleton animation="wave" variant="rounded" width="100%" height={300} />
+                                        <Skeleton animation="wave" variant="rounded" width="100%" />
+                                        <Skeleton animation="wave" variant="rounded" width="100%" />
+                                        <Skeleton animation="wave" variant="rounded" width="40%" />
+                                    
+                                    </>
+                                }    
                             </div>
                             <div className={styles.userInfo}>
                                 <img src="" alt="" width={32} height={32} className={styles.avatar} />

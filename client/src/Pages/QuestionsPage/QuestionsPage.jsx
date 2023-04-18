@@ -105,7 +105,7 @@ function QuestionsPage() {
 										{obj.title}
 									</Link>
 									<div className={styles.content}>
-										{obj.content}
+										{obj.shortDescription}
 									</div>
 								</div>
 							);
