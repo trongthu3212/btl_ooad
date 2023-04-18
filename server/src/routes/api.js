@@ -11,6 +11,8 @@ var courseController = require('../controllers/CourseController')
 var commentController = require('../controllers/CommentController')
 var answerController = require('../controllers/AnswerController');
 const VoteController = require('../controllers/VoteController');
+const CourseController = require('../controllers/CourseController');
+const AuthEnsurance = require('../middleware/AuthEnsurance');
 
 routers.get('/test', testController.execute)
 routers.get('/emailExisted', userController.emailExisted)
@@ -50,5 +52,11 @@ routers.post('/answer/downvote/:id', authEnsurance.ensureLoggedIn, VoteControlle
 routers.post('/comment/upvote/:id', authEnsurance.ensureLoggedIn, VoteController.upvoteComment)
 routers.post('/comment/downvote/:id', authEnsurance.ensureLoggedIn, VoteController.downvoteComment)
 
+routers.get('/course/list', CourseController.getAllCourses)
+routers.post('/course/add', AuthEnsurance.ensureLoggedIn, CourseController.addCourse)
+routers.post('/course/enroll', AuthEnsurance.ensureLoggedIn, CourseController.enrollCourse)
+routers.post('/course/leave', AuthEnsurance.ensureLoggedIn, CourseController.leaveCourse)
+
+routers.get('/user/getCourses/:id', CourseController.getParticipateCourses)
 
 module.exports = routers;
