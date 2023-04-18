@@ -1,14 +1,10 @@
 var mongoose = require("mongoose");
+const mongooseLeanVirtual = require('mongoose-lean-virtuals');
 
 var commentSchema = mongoose.Schema({
     content: {
         type: String,
         required: true
-    },
-    score: {
-        type: Number,
-        required: true,
-        default: 0
     },
     author: { type: mongoose.Schema.Types.ObjectId, ref: 'user' },
     post: { type: mongoose.Schema.Types.ObjectId, ref: 'post' },
@@ -16,5 +12,7 @@ var commentSchema = mongoose.Schema({
 } , {
     timestamps: true
 })
+
+commentSchema.plugin(mongooseLeanVirtual)
 
 module.exports = mongoose.model("comment", commentSchema);

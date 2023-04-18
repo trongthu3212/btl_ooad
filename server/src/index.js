@@ -12,6 +12,7 @@ const sessionConfig = require('./config/session')
 const apiRouters = require('./routes/api');
 const userModel = require('./models/user');
 const postModel = require('./models/post');
+const voteController = require('./controllers/VoteController');
 
 const app = express();
 
@@ -72,7 +73,9 @@ function bindAndStartServer() {
   // Work as body parser
   app.use(express.urlencoded({ extended: true }));
   app.use('/', apiRouters)
-  app.listen(appConfig.port, () => console.log('Listening on port %d', appConfig.port))  
+  app.listen(appConfig.port, () => console.log('Listening on port %d', appConfig.port))
+
+  voteController.getPostVote('64192ebac8a6c1ecb2f27816')
 }
 
 connectToDb();
