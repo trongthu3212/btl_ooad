@@ -69,3 +69,12 @@ export const increasePostView = async (idQuestion) => {
         console.log(error);
     }
 };
+
+export const getPostsPaging = async (page, pageSize) => {
+    try {
+        const { data } = await axios.get(`listPosts?page=${page}&quantity=${pageSize}`);
+        return data;
+    } catch (error) {
+        console.log(error);
+    }
+};

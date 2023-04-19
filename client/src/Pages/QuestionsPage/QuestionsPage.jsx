@@ -1,12 +1,23 @@
-import Sidebar from "../../Layouts/Sidebar/Sidebar";
-import styles from "./QuestionsPage.module.scss";
+import { Pagination, ToggleButton, ToggleButtonGroup, styled } from '@mui/material';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import 'bootstrap/dist/js/bootstrap.bundle';
 import { useEffect, useState } from "react";
-import { getAllPosts } from "../../Api/question-api";
-import Loader from "../../Components/Loader/Loader";
 import { Link, useNavigate } from "react-router-dom";
-import { ToggleButton, ToggleButtonGroup } from "@mui/material";
+import { getPostsPaging } from "../../Api/question-api";
+import Loader from "../../Components/Loader/Loader";
+import Sidebar from "../../Layouts/Sidebar/Sidebar";
+import styles from "./QuestionsPage.module.scss";
+
+const CustomToggleButton = styled(ToggleButton)({
+    borderRadius: "4px !important",
+    padding: "8px",
+    border: "1px solid rgba(0, 0, 0, 0.12) !important",
+    "&.Mui-selected": {
+        backgroundColor: "#f48225 !important",
+        color: "#ffffff",
+        borderColor: "#f48225"
+    }
+});
 
 function QuestionsPage() {
     const navigate = useNavigate();
@@ -14,16 +25,21 @@ function QuestionsPage() {
     // dữ liệu câu hỏi
     const [data, setData] = useState([]);
 
+    const [paging, setPaging] = useState({page: 1, pageSize: 15});
+
     // Cờ check loading
     const [isLoading, setIsLoading] = useState(true);
 
     // Lọc câu hỏi theo trạng thái
     const [state, setState] = useState("newest");
 
+    const [total, setTotal] = useState(0);
+
     useEffect(() => {
         // Lấy dữ liệu câu hỏi
-        getAllPosts().then(res => {
-            setData(res);
+        getPostsPaging(paging.page, paging.pageSize).then(res => {
+            setData(res.posts);
+            setTotal(res.globalPostCount);
             setIsLoading(false);
         })
         let leftSidebar = document.querySelector(".sidebar-nav");
@@ -47,6 +63,15 @@ function QuestionsPage() {
         };
     }, []);
 
+    useEffect(() => {
+        setIsLoading(true);
+        getPostsPaging(paging.page, paging.pageSize).then(res => {
+            setData(res.posts);
+            setTotal(res.globalPostCount);
+            setIsLoading(false);
+        })
+    }, [paging])
+
     /**
      * Thay đổi nhóm câu hỏi
      * @param {*} e 
@@ -61,6 +86,10 @@ function QuestionsPage() {
      */
     function openAskQuestion() {
         navigate("/questions/ask");
+    }
+
+    function changePageSize(e, value) {
+        setPaging({...paging, pageSize: value})
     }
 
     return (
@@ -112,6 +141,43 @@ function QuestionsPage() {
 						})
 					)}
 				</div>
+
+                <div className={styles.pagination}>
+                    <Pagination count={total % paging.pageSize === 0 ? total / paging.pageSize : parseInt(total / paging.pageSize) + 1}
+                        variant="outlined" shape="rounded"
+                        sx={{
+                            '& .Mui-selected': {
+                              backgroundColor: "#f48225 !important",
+                              color: "#ffffff",
+                              borderColor: "#f48225"
+                            },
+                          }}
+                    />
+                    <div className="d-flex align-items-center gap-2">
+                        <ToggleButtonGroup
+                            value={paging.pageSize}
+                            exclusive
+                            onChange={changePageSize}
+                            sx={{
+                                height: "32px"
+                            }}
+                        >
+                            <CustomToggleButton value={15}>
+                                15
+                            </CustomToggleButton>
+                            <CustomToggleButton value={30} sx={{
+                                    margin: "0 8px !important",
+                                }}
+                            >
+                                30
+                            </CustomToggleButton>
+                            <CustomToggleButton value={50}>
+                                50
+                            </CustomToggleButton>
+                        </ToggleButtonGroup>
+                        <span>trên trang</span>
+                    </div>
+                </div>
 			</div>
 		</div>
 	);
