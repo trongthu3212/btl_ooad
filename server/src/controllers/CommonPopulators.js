@@ -8,5 +8,8 @@ module.exports = {
     ],
     commentPopulators: [
         { path: 'author', select: 'username name' }
+    ],
+    userListCoursesPopulators: [
+        { path: 'course', select: 'code name' }
     ]
 }
