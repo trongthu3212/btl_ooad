@@ -1,25 +1,33 @@
 import Sidebar from "../../Layouts/Sidebar/Sidebar";
 import styles from "./QuestionPage.module.scss";
-import { Navigate, useParams } from "react-router-dom";
+import { Navigate, useNavigate, useParams } from "react-router-dom";
 import MDEditor from "@uiw/react-md-editor";
 import { useState, useEffect } from "react";
-import { getPost } from "../../Api/question-api";
+import { getComment, getPost } from "../../Api/question-api";
 import { Skeleton } from "@mui/material";
 import moment from "moment/moment";
 import 'moment/locale/vi'
 
 function QuestionPage() {
     let { idQuestion } = useParams();
+
+    const navigate = useNavigate();
+
     const [comment, setComment] = useState();
     const [question, setQuestion] = useState();
 
     const [askedTime, setAskedTime] = useState("");
+
+    const [myAnswer, setMyAnswer] = useState("");
 
     useEffect(() => {
         getPost(idQuestion).then((res) => {
             setQuestion(res);
             setAskedTime(res.createdAt);
         });
+        getComment(idQuestion).then((res) => {
+            setComment(res);
+        })
 
         let leftSidebar = document.querySelector(".sidebar-nav");
         let footer = document.querySelector('.footer');
@@ -46,7 +54,7 @@ function QuestionPage() {
          * Điều hướng sang trang câu hỏi
          */
     function openAskQuestion() {
-        Navigate("/questions/ask");
+        navigate("/questions/ask");
     }
 
     /**
@@ -70,6 +78,13 @@ function QuestionPage() {
         return moment(`${year}${month}${date}`, "YYYYMMDD").fromNow();
     }
 
+
+    /**
+     * Post câu trả lời
+     */
+    function postAnswer() {
+
+    }
     return (
 		<div className={styles["question-page"]}>
 			<Sidebar />
@@ -96,11 +111,11 @@ function QuestionPage() {
                     <div className={styles["question-content"]}>
                         <div className={styles.voteSection}>
                             <button className={styles.btnVote}>
-                                <svg aria-hidden="true" class="svg-icon iconArrowUpLg" width="36" height="36" viewBox="0 0 36 36"><path d="M2 25h32L18 9 2 25Z"></path></svg>
+                                <svg aria-hidden="true" className="svg-icon iconArrowUpLg" width="36" height="36" viewBox="0 0 36 36"><path d="M2 25h32L18 9 2 25Z"></path></svg>
                             </button>
-                            <div className={styles.voteCount}>0</div>
+                            <div className={styles.voteCount}>{question?.score}</div>
                             <button className={styles.btnVote}>
-                                <svg aria-hidden="true" class="svg-icon iconArrowDownLg" width="36" height="36" viewBox="0 0 36 36"><path d="M2 11h32L18 27 2 11Z"></path></svg>
+                                <svg aria-hidden="true" className="svg-icon iconArrowDownLg" width="36" height="36" viewBox="0 0 36 36"><path d="M2 11h32L18 27 2 11Z"></path></svg>
                             </button>
                         </div>
                         <div className={`${styles.questionDetail} flex-grow-1`}>
@@ -113,19 +128,98 @@ function QuestionPage() {
                                         <Skeleton animation="wave" variant="rounded" width="100%" />
                                         <Skeleton animation="wave" variant="rounded" width="100%" />
                                         <Skeleton animation="wave" variant="rounded" width="40%" />
-                                    
                                     </>
                                 }    
                             </div>
+                            {question ? <div className={styles.postTag}>
+                                <div className={styles.tag}>{question.course?.code}</div>
+                                <div className={styles.tag}>{question.course?.name}</div>
+                            </div> 
+                            : <div className={styles.postTag}>
+                                <Skeleton animation="wave" variant="rounded" width={80} height={20} />
+                                <Skeleton animation="wave" variant="rounded" width={80} height={20} />
+                            </div>
+                            }
                             <div className={styles.userInfo}>
-                                <img src="" alt="" width={32} height={32} className={styles.avatar} />
+                                {question ? <img src="" alt="" width={32} height={32} className={styles.avatar} />
+                                : <Skeleton animation="wave" variant="circular" width={32} height={32} />}
                                 <div className={styles.userDetail}>
-                                    <a href="">{question?.author.username}</a>
+                                    {question ? <a href="">{question?.author.username}</a>
+                                    : <Skeleton animation="wave" variant="rounded" width={80} height={20} />}
                                     <div className={styles.reputationScore}></div>
                                 </div>
                             </div>
-                            <div className={styles.commentSection}></div>
+                            <div className={styles.commentSection}>
+                                {comment ? (
+                                    (comment.map((obj, idx) => (
+                                        <div key={idx} className={styles.comment}>
+                                            <span>{obj.content}</span> - <a href="#">{obj.author?.username}</a>
+                                        </div>
+                                    )))
+                                ) : 
+                                <Skeleton animation="wave" variant="rounded" width="100%" />}
+                            </div>
+                            <div className={styles.addComment}>
+                                Thêm bình luận
+                            </div>
                         </div>
+                    </div>
+                    {question?.answers && question.answers.length > 0 &&
+                        <div className={styles.answerSection}>
+                            <h2 className={styles.countAnswer}>
+                                {question.answers.length} câu trả lời
+                            </h2>
+                            {question.answers.map((answer, idx) => (
+                                <div className={styles["question-content"]} key={idx}>
+                                    <div className={styles.voteSection}>
+                                        <button className={styles.btnVote}>
+                                            <svg aria-hidden="true" className="svg-icon iconArrowUpLg" width="36" height="36" viewBox="0 0 36 36"><path d="M2 25h32L18 9 2 25Z"></path></svg>
+                                        </button>
+                                        <div className={styles.voteCount}>0</div>
+                                        <button className={styles.btnVote}>
+                                            <svg aria-hidden="true" className="svg-icon iconArrowDownLg" width="36" height="36" viewBox="0 0 36 36"><path d="M2 11h32L18 27 2 11Z"></path></svg>
+                                        </button>
+                                    </div>
+                                    <div className={`${styles.questionDetail} flex-grow-1`}>
+                                        <div className={styles.content}>
+                                            {answer.content}
+                                        </div>
+                                        <div className={styles.userInfo}>
+                                            <img src="" alt="" width={32} height={32} className={styles.avatar} />
+                                            <div className={styles.userDetail}>
+                                                <a href="">{answer.author.username}</a>
+                                                <div className={styles.reputationScore}></div>
+                                            </div>
+                                        </div>
+                                        <div className={styles.commentSection}>
+                                            {comment ? (
+                                                (comment.map((obj, idx) => (
+                                                    <div key={idx} className={styles.comment}>
+                                                        <span>{obj.content}</span> - <a href="#">{obj.author?.username}</a>
+                                                    </div>
+                                                )))
+                                            ) :
+                                                <Skeleton animation="wave" variant="rounded" width="100%" />}
+                                        </div>
+                                        <div className={styles.addComment}>
+                                            Thêm bình luận
+                                        </div>
+                                    </div>
+                                </div>
+                            ))}
+                        </div>
+                    }
+                    <div className={`${styles.answerSection} ${styles.myAnswer}`} data-color-mode="light">
+                        <h2 className={styles.countAnswer}>
+                            Câu trả lời của bạn
+                        </h2>
+                        <MDEditor value={myAnswer} onChange={setMyAnswer} height="250" />
+                        <button
+                            className={`btn btn-primary d-flex align-items-center ${styles.btnAskQuestion}`}
+                            onClick={postAnswer}
+                        >
+                            Trả lời
+                        </button>
                     </div>
 				</div>
 			</div>

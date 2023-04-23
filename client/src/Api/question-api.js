@@ -78,3 +78,12 @@ export const getPostsPaging = async (page, pageSize) => {
         console.log(error);
     }
 };
+
+export const getComment = async (id) => {
+    try {
+        const { data } = await axios.get(`comment/list?postId=${id}`);
+        return data;
+    } catch (error) {
+        console.log(error);
+    }
+};

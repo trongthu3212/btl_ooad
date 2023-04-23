@@ -1,10 +1,9 @@
-import { Pagination, ToggleButton, ToggleButtonGroup, styled } from '@mui/material';
+import { Pagination, Skeleton, ToggleButton, ToggleButtonGroup, styled } from '@mui/material';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import 'bootstrap/dist/js/bootstrap.bundle';
 import { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { getPostsPaging } from "../../Api/question-api";
-import Loader from "../../Components/Loader/Loader";
 import Sidebar from "../../Layouts/Sidebar/Sidebar";
 import styles from "./QuestionsPage.module.scss";
 
@@ -92,6 +91,13 @@ function QuestionsPage() {
         setPaging({...paging, pageSize: value})
     }
 
+    /**
+     * Thay đổi trạng thái lọc
+     */
+    function changeFilter(state) {
+        setState(state);
+    }
+
     return (
 		<div className={styles["questions-page"]}>
 			<Sidebar />
@@ -108,21 +114,42 @@ function QuestionsPage() {
                         </button>
                     </div>
     
-                    <div className="d-flex justify-content-end">
-                        <div className="btn-group">
-                            <button type="button" className="btn btn-outline-secondary">
-                                Mới nhất
-                            </button>
-                            <button type="button" className="btn btn-outline-secondary">
-                                Chưa trả lời
-                            </button>
+                    <div className="d-flex justify-content-between">
+                        {!isLoading ? <div className={styles.totalQuestion}>{total} câu hỏi</div>
+                        : <Skeleton animation="wave" variant="rounded" width={200} height={24} />}
+                        <div className={`btn-group ${styles.filter}`}>
+                            <input type="radio" className="btn-check" name="btnradio" id="btnradio1"
+                                checked={state === "newest"} onChange={() => changeFilter("newest")} />
+                            <label className="btn btn-outline-secondary" htmlFor="btnradio1">Mới nhất</label>
+
+                            <input type="radio" className="btn-check" name="btnradio" id="btnradio2"
+                                checked={state === "unanswered"} onChange={() => changeFilter("unanswered")}/>
+                            <label className="btn btn-outline-secondary" htmlFor="btnradio2">Chưa trả lời</label>
                         </div>
                     </div>
                 </div>
 
 				<div className={styles["list-question"]}>
 					{isLoading ? (
-						<Loader />
+						[...Array(15)].map((value, index) => (
+                            <div className={styles["preview-question"]} key={index}>
+                                <div className={styles.titleLoading}>
+                                    <Skeleton animation="wave" variant="rounded" width="50%" height={24} />
+                                </div>
+                                <div className={styles.contentLoading}>
+                                    <Skeleton animation="wave" variant="rounded" width="100%" height={20} />
+                                    <Skeleton animation="wave" variant="rounded" width="100%" height={20} />
+                                    <Skeleton animation="wave" variant="rounded" width="70%" height={20} />
+                                </div>
+                                <div className={styles.footerLoading}>
+                                    <div className={styles.postTag}>
+                                        <Skeleton animation="wave" variant="rounded" width={80} height={20} />
+                                        <Skeleton animation="wave" variant="rounded" width={80} height={20} />
+                                    </div>
+                                    <Skeleton animation="wave" variant="rounded" width={300} height={20} />
+                                </div>
+                            </div>
+                        ))
 					) : (
 						data.map((obj) => {
 							return (
@@ -136,6 +163,15 @@ function QuestionsPage() {
 									<div className={styles.content}>
 										{obj.shortDescription}
 									</div>
+                                    <div className={styles.footer}>
+                                        {obj.course ? <div className={styles.postTag}>
+                                            <div className={styles.tag}>{obj.course.code}</div>
+                                            <div className={styles.tag}>{obj.course.name}</div>
+                                        </div> : <div></div>}
+                                        <div className={styles.user}>
+                                            <a href="#">{obj.author.username}</a> đã hỏi
+                                        </div>
+                                    </div>
 								</div>
 							);
 						})
