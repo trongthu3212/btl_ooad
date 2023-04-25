@@ -7,8 +7,9 @@ async function addCourse(req, res) {
     let courseCode = req.body.code;
 
     let courseFound = await courseModel.findOne({ code: courseCode });
-    if (!courseFound) {
-        res.sendStatus(409).json({ error: "The error already existed!" });
+    
+    if (courseFound) {
+        res.status(409).json({ error: "The error already existed!" });
         return;
     }
 
@@ -101,10 +102,23 @@ async function leaveCourse(req, res) {
         .catch(err => { res.json({ error: err })});
 }
 
+async function suggestCourses(req, res) {
+    let keyword = req.body.keyword
+    let limit = req.body.limit
+
+    await courseModel.find({ $or: [ 
+        { "code": { $regex: '.*' + keyword + '.*', $options: 'i' } },
+        { "name": { $regex: '.*' + keyword + '.*', $options: 'i' } }
+    ]}).limit(limit)
+        .then(courses => res.json({ courses: courses }))
+        .catch(err => res.status(500).json({ error: err }))
+}
+
 module.exports = {
     addCourse: addCourse,
     getAllCourses: getAllCourses,
     getParticipateCourses: getParticipateCourses,
     enrollCourse: enrollCourse,
-    leaveCourse: leaveCourse
+    leaveCourse: leaveCourse,
+    suggestCourses: suggestCourses
 };

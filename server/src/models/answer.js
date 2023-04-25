@@ -7,7 +7,11 @@ var answerSchema = mongoose.Schema({
         required: true
     },
     author: { type: mongoose.Schema.Types.ObjectId, ref: 'user' },
-    post: { type: mongoose.Schema.Types.ObjectId, ref: 'post' }
+    post: { type: mongoose.Schema.Types.ObjectId, ref: 'post' },
+    accepted: {
+        type: Boolean,
+        default: false
+    }
 } , {
     timestamps: true
 })

@@ -34,6 +34,7 @@ routers.delete('/deletePost', authEnsurance.ensureLoggedIn, postController.delet
 
 routers.post('/course/create', authEnsurance.ensureLoggedIn, courseController.addCourse)
 routers.post('/answer/add', authEnsurance.ensureLoggedIn, answerController.addAnswer)
+routers.post('/answer/accept/:id', authEnsurance.ensureLoggedIn, answerController.acceptAnswer)
 routers.post('/comment/add', authEnsurance.ensureLoggedIn, commentController.addComment)
 routers.get('/comment/list', commentController.listComment)
 
@@ -56,6 +57,7 @@ routers.get('/course/list', CourseController.getAllCourses)
 routers.post('/course/add', AuthEnsurance.ensureLoggedIn, CourseController.addCourse)
 routers.post('/course/enroll', AuthEnsurance.ensureLoggedIn, CourseController.enrollCourse)
 routers.post('/course/leave', AuthEnsurance.ensureLoggedIn, CourseController.leaveCourse)
+routers.get('/course/suggest', CourseController.suggestCourses)
 
 routers.get('/user/getCourses/:id', CourseController.getParticipateCourses)
 

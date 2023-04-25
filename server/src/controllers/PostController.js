@@ -15,10 +15,14 @@ async function addPost(req, res) {
         })
     }
 
+    let previousLen = content.length;
     let shortDescription = content.substr(0, postConfig.maxShortDescriptionLength)
+
     shortDescription = shortDescription.replace(/[\r\n]+/g, ' ')
 
-    shortDescription += "..."
+    if (previousLen != shortDescription.length) {
+        shortDescription += "..."
+    }
     
     var post = new postModel({
         title: title,
@@ -136,7 +140,7 @@ async function deletePost(req, res) {
 }
 
 async function increasePostView(req, res) {
-    let obj = await postModel.findById(req.body._id);
+    let obj = await postModel.findById(req.body.id);
     if ((obj == undefined) || (obj == null)) {
         res.sendStatus(404);
     } else {

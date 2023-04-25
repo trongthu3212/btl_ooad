@@ -1,3 +1,3 @@
 module.exports = {
-    maxShortDescriptionLength: 80
+    maxShortDescriptionLength: 100
 }
