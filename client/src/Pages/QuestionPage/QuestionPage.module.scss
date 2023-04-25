@@ -63,13 +63,13 @@
 }
 
 .userInfo {
-    margin-top: 20px;
     border-radius: 4px;
     background-color: #d9eaf7;
     padding: 6px;
     max-width: 200px;
     display: flex;
-    align-self: flex-end;
+    flex-direction: column;
+    gap: 4px;
     .avatar {
         border-radius: 4px;
     }
@@ -80,6 +80,9 @@
         a {
             text-decoration: none;
         }
+    }
+    .actionTime {
+        color: #6a737c;
     }
 }
 
@@ -123,7 +126,7 @@
         font-weight: 400;
         font-size: 19px;
     }
-    .question-content {
+    .question-content:not(:last-child) {
         border-bottom: 1px solid rgb(227, 230, 232);
     }
 }
@@ -145,4 +148,18 @@
     .btnAskQuestion {
         margin-top: 32px;
     }
+}
+
+.edit {
+    color: #6a737c;
+    font-size: 13px;
+    cursor: pointer;
+    &:hover {
+        color: #838c95;
+    }
+}
+
+.actionTime {
+    font-size: 12px;
+    color: #0074cc;
 }

@@ -17,6 +17,7 @@ import { Routes, Route } from "react-router-dom";
 import { getCurrentUser } from "./Api/user-api";
 import AuthContext from "./Auth/AuthProvider";
 import Cookies from "js-cookie";
+import { ToastContainer } from "react-toastify";
 
 function App() {
     const { setAuth } = useContext(AuthContext);
@@ -31,7 +32,7 @@ function App() {
     return (
         <React.Fragment>
             <Header />
-
+            <ToastContainer />
             <Routes>
                 {/* public routes */}
                 <Route index element={<HomePage />} />

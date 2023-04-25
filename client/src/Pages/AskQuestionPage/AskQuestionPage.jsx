@@ -4,6 +4,7 @@ import MDEditor from "@uiw/react-md-editor";
 import { postQuestion } from "../../Api/question-api";
 import "./AskQuestionPage.scss";
 import { Button, Dialog, DialogActions, DialogContent, DialogTitle } from "@mui/material";
+import { toast } from "react-toastify";
 
 function AskQuestionPage() {
     const navigate = useNavigate();
@@ -26,16 +27,22 @@ function AskQuestionPage() {
         setOpenSubmit(true);
     }
 
+		/**
+		 * Thông báo
+		 * @param {} string 
+		 * @returns 
+		 */
+		const notify = (string) => toast(string);
+
     /**
      * Xác nhận post question
      */
     function confirmPost() {
         postQuestion(title, content, tags).then((res) => {
-            if (res.postId) {
-
-                alert("Success " + res.postId);
-                navigate("/questions");
-            } else alert("ERROR: " + res);
+            if (res && res.postId) {
+							notify("Đặt câu hỏi thành công")
+							navigate("/questions");
+            } else notify("Không thể đặt câu hỏi")
         });
         closeConfirmSubmit();
     }

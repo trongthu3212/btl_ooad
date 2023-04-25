@@ -2,14 +2,16 @@ import Sidebar from "../../Layouts/Sidebar/Sidebar";
 import styles from "./QuestionPage.module.scss";
 import { Navigate, useNavigate, useParams } from "react-router-dom";
 import MDEditor from "@uiw/react-md-editor";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useContext } from "react";
 import { getComment, getPost } from "../../Api/question-api";
 import { Skeleton } from "@mui/material";
 import moment from "moment/moment";
 import 'moment/locale/vi'
+import AuthContext from "Auth/AuthProvider";
 
 function QuestionPage() {
     let { idQuestion } = useParams();
+    const {auth} = useContext(AuthContext);
 
     const navigate = useNavigate();
 
@@ -51,8 +53,8 @@ function QuestionPage() {
     }, []);
 
     /**
-         * Điều hướng sang trang câu hỏi
-         */
+     * Điều hướng sang trang câu hỏi
+     */
     function openAskQuestion() {
         navigate("/questions/ask");
     }
@@ -60,24 +62,23 @@ function QuestionPage() {
     /**
      * chuyển đổi ngày tháng dạng ... ngày trước
      */
-    function convertDate(stringDate) {
+    function convertDateBefore(stringDate) {
         if (!stringDate) {
             return "";
         }
-        let date = new Date(stringDate);
-        let day = date.getDate();
-        let month = date.getMonth() + 1;
-        if (month < 10) {
-            month = "0" + month;
-        }
-        if (day < 10) {
-            day = "0" + day;
-        }
-        let year = date.getFullYear();
         moment.locale("vi");
-        return moment(`${year}${month}${date}`, "YYYYMMDD").fromNow();
+        return moment(stringDate).fromNow();
     }
 
+    /**
+     * Chuyển đổi ngày tháng theo format vi
+     */
+    function convertDateTime(stringDate) {
+        if (!stringDate) {
+            return "";
+        }
+        return moment(stringDate).format('lll');
+    }
 
     /**
      * Post câu trả lời
@@ -94,17 +95,17 @@ function QuestionPage() {
                         <div className="d-flex justify-content-between align-items-center">
                             <h2 className="title">{question ? question.title
                                 : <Skeleton animation="wave" width={300} height={32} />}</h2>
-                            <button
+                            {auth && <button
                                 className={`btn btn-primary d-flex align-items-center ${styles.btnAskQuestion}`}
                                 onClick={openAskQuestion}
                             >
                                 Đặt câu hỏi
-                            </button>
+                            </button>}
                         </div>
-                        <div className="d-flex justify-content-start mb-1 gap-3">
-                            <div><span className="text-blur">Thời gian hỏi</span> <span>{convertDate(askedTime)}</span></div>
-                            <div><span className="text-blur">Thời gian chỉnh sửa</span> <span></span></div>
-                            <div><span className="text-blur">Lượt xem</span> <span></span></div>
+                        <div className="d-flex justify-content-start mb-1 gap-5">
+                            <div><span className="text-blur">Thời gian hỏi</span> <span>{convertDateBefore(askedTime)}</span></div>
+                            <div><span className="text-blur">Thời gian chỉnh sửa</span> <span>{convertDateBefore(question?.updatedAt)}</span></div>
+                            <div><span className="text-blur">Lượt xem</span> <span>{question?.view || 0}</span></div>
                         </div>
                         <div></div>
                     </div>
@@ -140,13 +141,20 @@ function QuestionPage() {
                                 <Skeleton animation="wave" variant="rounded" width={80} height={20} />
                             </div>
                             }
-                            <div className={styles.userInfo}>
-                                {question ? <img src="" alt="" width={32} height={32} className={styles.avatar} />
-                                : <Skeleton animation="wave" variant="circular" width={32} height={32} />}
-                                <div className={styles.userDetail}>
-                                    {question ? <a href="">{question?.author.username}</a>
-                                    : <Skeleton animation="wave" variant="rounded" width={80} height={20} />}
-                                    <div className={styles.reputationScore}></div>
+                            <div className="d-flex justify-content-between mt-5">
+                                <span className={styles.edit}>{auth && "Chỉnh sửa"}</span>
+                                {question?.updatedAt && <span className={styles.actionTime}>Đã chỉnh sửa {convertDateTime(question.updatedAt)}</span>}
+                                <div className={styles.userInfo}>
+                                    {question?.createdAt && <span className={styles.actionTime}>Đã hỏi {convertDateTime(question.createdAt)}</span>}
+                                    <div className="d-flex">
+                                        {question ? <img src="" alt="" width={32} height={32} className={styles.avatar} />
+                                        : <Skeleton animation="wave" variant="circular" width={32} height={32} />}
+                                        <div className={styles.userDetail}>
+                                            {question ? <a href="">{question?.author.username}</a>
+                                            : <Skeleton animation="wave" variant="rounded" width={80} height={20} />}
+                                            <div className={styles.reputationScore}></div>
+                                        </div>
+                                    </div>
                                 </div>
                             </div>
                             <div className={styles.commentSection}>
@@ -159,9 +167,9 @@ function QuestionPage() {
                                 ) : 
                                 <Skeleton animation="wave" variant="rounded" width="100%" />}
                             </div>
-                            <div className={styles.addComment}>
+                            {auth && <div className={styles.addComment}>
                                 Thêm bình luận
-                            </div>
+                            </div>}
                         </div>
                     </div>
                     {question?.answers && question.answers.length > 0 &&
@@ -184,11 +192,20 @@ function QuestionPage() {
                                         <div className={styles.content}>
                                             {answer.content}
                                         </div>
-                                        <div className={styles.userInfo}>
-                                            <img src="" alt="" width={32} height={32} className={styles.avatar} />
-                                            <div className={styles.userDetail}>
-                                                <a href="">{answer.author.username}</a>
-                                                <div className={styles.reputationScore}></div>
+                                        <div className="d-flex justify-content-between mt-5">
+                                            <span className={styles.edit}>{auth && "Chỉnh sửa"}</span>
+                                            {question?.updatedAt && <span className={styles.actionTime}>Đã chỉnh sửa {convertDateTime(question.updatedAt)}</span>}
+                                            <div className={styles.userInfo}>
+                                                {question?.createdAt && <span className={styles.actionTime}>Đã hỏi {convertDateTime(question.createdAt)}</span>}
+                                                <div className="d-flex">
+                                                    {question ? <img src="" alt="" width={32} height={32} className={styles.avatar} />
+                                                        : <Skeleton animation="wave" variant="circular" width={32} height={32} />}
+                                                    <div className={styles.userDetail}>
+                                                        {question ? <a href="">{question?.author.username}</a>
+                                                            : <Skeleton animation="wave" variant="rounded" width={80} height={20} />}
+                                                        <div className={styles.reputationScore}></div>
+                                                    </div>
+                                                </div>
                                             </div>
                                         </div>
                                         <div className={styles.commentSection}>
@@ -201,15 +218,15 @@ function QuestionPage() {
                                             ) :
                                                 <Skeleton animation="wave" variant="rounded" width="100%" />}
                                         </div>
-                                        <div className={styles.addComment}>
+                                        {auth && <div className={styles.addComment}>
                                             Thêm bình luận
-                                        </div>
+                                        </div>}
                                     </div>
                                 </div>
                             ))}
                         </div>
                     }
-                    <div className={`${styles.answerSection} ${styles.myAnswer}`} data-color-mode="light">
+                    {auth && <div className={`${styles.answerSection} ${styles.myAnswer}`} data-color-mode="light">
                         <h2 className={styles.countAnswer}>
                             Câu trả lời của bạn
                         </h2>
@@ -220,7 +237,7 @@ function QuestionPage() {
                         >
                             Trả lời
                         </button>
-                    </div>
+                    </div>}
 				</div>
 			</div>
 		</div>

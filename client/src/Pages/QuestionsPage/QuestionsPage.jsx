@@ -1,11 +1,12 @@
-import { Pagination, Skeleton, ToggleButton, ToggleButtonGroup, styled } from '@mui/material';
+import { Alert, Pagination, Skeleton, ToggleButton, ToggleButtonGroup, styled } from '@mui/material';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import 'bootstrap/dist/js/bootstrap.bundle';
-import { useEffect, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { getPostsPaging } from "../../Api/question-api";
 import Sidebar from "../../Layouts/Sidebar/Sidebar";
 import styles from "./QuestionsPage.module.scss";
+import AuthContext from 'Auth/AuthProvider';
 
 const CustomToggleButton = styled(ToggleButton)({
     borderRadius: "4px !important",
@@ -20,6 +21,8 @@ const CustomToggleButton = styled(ToggleButton)({
 
 function QuestionsPage() {
     const navigate = useNavigate();
+
+    const {auth} = useContext(AuthContext);
 
     // dữ liệu câu hỏi
     const [data, setData] = useState([]);
@@ -106,12 +109,12 @@ function QuestionsPage() {
                 <div className={styles["header-content"]}>
                     <div className="d-flex justify-content-between align-items-center">
                         <h2 className="title">Tất cả câu hỏi</h2>
-                        <button
+                        {auth && <button
                             className={`btn btn-primary d-flex align-items-center ${styles.btnAskQuestion}`}
                             onClick={openAskQuestion}
                         >
                             Đặt câu hỏi
-                        </button>
+                        </button>}
                     </div>
     
                     <div className="d-flex justify-content-between">
