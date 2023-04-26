@@ -1,10 +1,10 @@
 import axios from "axios";
 
-export const postQuestion = async (title, content, tags) => {
+export const postQuestion = async (title, content, courseId) => {
     const payload = new URLSearchParams({
         title: title,
         content: content,
-        tags: tags.split(" "),
+        courseId: courseId,
     });
 
     try {

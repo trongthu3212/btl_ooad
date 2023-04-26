@@ -38,12 +38,8 @@ function QuestionsPage() {
     const [total, setTotal] = useState(0);
 
     useEffect(() => {
-        // Lấy dữ liệu câu hỏi
-        getPostsPaging(paging.page, paging.pageSize).then(res => {
-            setData(res.posts);
-            setTotal(res.globalPostCount);
-            setIsLoading(false);
-        })
+        console.log("first render");
+
         let leftSidebar = document.querySelector(".sidebar-nav");
         let footer = document.querySelector('.footer');
 
@@ -67,12 +63,13 @@ function QuestionsPage() {
 
     useEffect(() => {
         setIsLoading(true);
+        console.log("change page");
         getPostsPaging(paging.page, paging.pageSize).then(res => {
             setData(res.posts);
             setTotal(res.globalPostCount);
             setIsLoading(false);
         })
-    }, [paging])
+    }, [paging.page, paging.pageSize])
 
     /**
      * Thay đổi nhóm câu hỏi
@@ -196,7 +193,7 @@ function QuestionsPage() {
                         <ToggleButtonGroup
                             value={paging.pageSize}
                             exclusive
-                            onChange={changePageSize}
+                            onChange={() => changePageSize}
                             sx={{
                                 height: "32px"
                             }}

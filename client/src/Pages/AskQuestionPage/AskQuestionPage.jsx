@@ -11,9 +11,6 @@ function AskQuestionPage() {
     const [title, setTitle] = useState("");
     const [content, setContent] = useState("");
     const [tags, setTags] = useState("");
-    
-    // Xác nhận post câu hỏi
-    const [openSubmit, setOpenSubmit] = useState(false);
 
     function handleTitle(e) {
         setTitle(e.target.value);
@@ -23,8 +20,8 @@ function AskQuestionPage() {
         setTags(e.target.value);
     }
 
-    function submmitQuestion() {
-        setOpenSubmit(true);
+    function submitQuestion() {
+			toast.success('Đặt câu hỏi thành công');
     }
 
 		/**
@@ -38,35 +35,16 @@ function AskQuestionPage() {
      * Xác nhận post question
      */
     function confirmPost() {
-        postQuestion(title, content, tags).then((res) => {
-            if (res && res.postId) {
-							notify("Đặt câu hỏi thành công")
-							navigate("/questions");
-            } else notify("Không thể đặt câu hỏi")
-        });
-        closeConfirmSubmit();
-    }
-
-    /**
-     * Đóng dialog xác nhận submit
-     */
-    function closeConfirmSubmit() {
-        setOpenSubmit(false);
+        // postQuestion(title, content, courseId).then((res) => {
+        //     if (res && res.postId) {
+				// 			notify("Đặt câu hỏi thành công")
+				// 			navigate("/questions");
+        //     } else notify("Không thể đặt câu hỏi")
+        // });
     }
 
     return (
 		<div className="ask-question-page">
-			<Dialog open={openSubmit} onClose={closeConfirmSubmit}>
-				<DialogContent>
-                    Are you sure you want to public your question ?
-				</DialogContent>
-				<DialogActions>
-					<Button onClick={closeConfirmSubmit}>Disagree</Button>
-					<Button onClick={confirmPost} autoFocus>
-						Agree
-					</Button>
-				</DialogActions>
-			</Dialog>
 			<div className="ask-question-page__header">
 				Ask a public question
 			</div>
@@ -98,9 +76,7 @@ function AskQuestionPage() {
 					/>
 				</div>
 			</div>
-			<div className="ask__submmit" onClick={submmitQuestion}>
-				Public your question
-			</div>
+			<Button variant="contained" onClick={submitQuestion} className="ask__submit">Đặt câu hỏi</Button>
 		</div>
 	);
 }

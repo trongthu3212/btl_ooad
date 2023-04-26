@@ -1,23 +1,24 @@
-import React, { useEffect, useContext } from "react";
-import Header from "./Layouts/Header/Header";
-import Footer from "./Layouts/Footer/Footer";
-import {
-    HomePage,
-    LoginPage,
-    SignupPage,
-    QuestionsPage,
-    NotFoundPage,
-    AdminPage,
-    AskQuestionPage,
-    QuestionPage,
-    UserProfilePage,
-} from "./Pages/pages";
-import RequireAuth from "./Auth/RequireAuth";
-import { Routes, Route } from "react-router-dom";
+import Cookies from "js-cookie";
+import React, { useContext, useEffect } from "react";
+import { Route, Routes } from "react-router-dom";
+import { Slide, ToastContainer } from "react-toastify";
+import 'react-toastify/dist/ReactToastify.css';
 import { getCurrentUser } from "./Api/user-api";
 import AuthContext from "./Auth/AuthProvider";
-import Cookies from "js-cookie";
-import { ToastContainer } from "react-toastify";
+import RequireAuth from "./Auth/RequireAuth";
+import Footer from "./Layouts/Footer/Footer";
+import Header from "./Layouts/Header/Header";
+import {
+    AdminPage,
+    AskQuestionPage,
+    HomePage,
+    LoginPage,
+    NotFoundPage,
+    QuestionPage,
+    QuestionsPage,
+    SignupPage,
+    UserProfilePage,
+} from "./Pages/pages";
 
 function App() {
     const { setAuth } = useContext(AuthContext);
@@ -32,7 +33,19 @@ function App() {
     return (
         <React.Fragment>
             <Header />
-            <ToastContainer />
+            <ToastContainer
+                position="top-center"
+                autoClose={3000}
+                transition={Slide}
+                hideProgressBar={false}
+                newestOnTop={false}
+                closeOnClick={false}
+                rtl={false}
+                pauseOnFocusLoss={false}
+                draggable={false}
+                pauseOnHover={false}
+                theme="colored"
+            />
             <Routes>
                 {/* public routes */}
                 <Route index element={<HomePage />} />
