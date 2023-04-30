@@ -3,7 +3,7 @@ import styles from "./QuestionPage.module.scss";
 import { Navigate, useNavigate, useParams } from "react-router-dom";
 import MDEditor from "@uiw/react-md-editor";
 import { useState, useEffect, useContext } from "react";
-import { getComment, getPost } from "../../Api/question-api";
+import { getComment, getPost, increasePostView } from "../../Api/question-api";
 import { Skeleton } from "@mui/material";
 import moment from "moment/moment";
 import 'moment/locale/vi'
@@ -30,6 +30,8 @@ function QuestionPage() {
         getComment(idQuestion).then((res) => {
             setComment(res);
         })
+
+        increasePostView(idQuestion);
 
         let leftSidebar = document.querySelector(".sidebar-nav");
         let footer = document.querySelector('.footer');

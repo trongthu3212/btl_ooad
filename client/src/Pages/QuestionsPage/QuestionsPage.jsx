@@ -138,7 +138,6 @@ function QuestionsPage() {
                                 </div>
                                 <div className={styles.contentLoading}>
                                     <Skeleton animation="wave" variant="rounded" width="100%" height={20} />
-                                    <Skeleton animation="wave" variant="rounded" width="100%" height={20} />
                                     <Skeleton animation="wave" variant="rounded" width="70%" height={20} />
                                 </div>
                                 <div className={styles.footerLoading}>
