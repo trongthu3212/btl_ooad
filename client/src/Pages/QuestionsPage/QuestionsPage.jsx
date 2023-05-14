@@ -2,7 +2,7 @@ import { Alert, Pagination, Skeleton, ToggleButton, ToggleButtonGroup, styled } 
 import 'bootstrap/dist/css/bootstrap.min.css';
 import 'bootstrap/dist/js/bootstrap.bundle';
 import { useContext, useEffect, useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 import { getPostsPaging } from "../../Api/question-api";
 import Sidebar from "../../Layouts/Sidebar/Sidebar";
 import styles from "./QuestionsPage.module.scss";
@@ -95,6 +95,11 @@ function QuestionsPage() {
         setState(state);
     }
 
+    function viewQuestion(id) {
+        sessionStorage.setItem(`increaseView${id}`, true);
+        navigate(`/question/${id}`);
+    }
+
     return (
 		<div className={styles["questions-page"]}>
 			<Sidebar />
@@ -153,9 +158,9 @@ function QuestionsPage() {
 									className={styles["preview-question"]}
 									key={obj.id}
 								>
-									<Link to={obj.id} className={styles.title}>
+									<div onClick={() => viewQuestion(obj.id)} className={styles.title}>
 										{obj.title}
-									</Link>
+									</div>
 									<div className={styles.content}>
 										{obj.shortDescription}
 									</div>

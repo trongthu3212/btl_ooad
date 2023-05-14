@@ -1,6 +1,6 @@
 import Sidebar from "../../Layouts/Sidebar/Sidebar";
 import styles from "./QuestionPage.module.scss";
-import { Navigate, useNavigate, useParams } from "react-router-dom";
+import { Navigate, useLocation, useNavigate, useParams } from "react-router-dom";
 import MDEditor from "@uiw/react-md-editor";
 import { useState, useEffect, useContext } from "react";
 import { getComment, getPost, increasePostView } from "../../Api/question-api";
@@ -22,18 +22,20 @@ function QuestionPage() {
 
     const [answers, setAnswers] = useState([]);
 
-    const [askedTime, setAskedTime] = useState("");
-
     const [myAnswer, setMyAnswer] = useState("");
 
     const [openAddComment, setOpenAddComment] = useState(false);
 
     useEffect(() => {
-        increasePostView(idQuestion).then(() => {
-            getPost(idQuestion).then((res) => {
-                setQuestion({...res, myComment: "", isShowCommentInput: false});
-                setAskedTime(res.createdAt);
-            });
+        let isIncreaseView = sessionStorage.getItem(`increaseView${idQuestion}`);
+        getPost(idQuestion).then((res) => {
+            if (isIncreaseView) {
+                setQuestion({...res, myComment: "", isShowCommentInput: false, view: res.view + 1});
+                increasePostView(idQuestion);
+                sessionStorage.removeItem(`increaseView${idQuestion}`);
+            } else {
+                setQuestion({...res, myComment: "", isShowCommentInput: false });
+            }
         });
         
         getComment(idQuestion).then((res) => {
@@ -133,7 +135,7 @@ function QuestionPage() {
                             </button>}
                         </div>
                         <div className="d-flex justify-content-start mb-1 gap-5">
-                            <div><span className="text-blur">Thời gian hỏi</span> <span>{convertDateBefore(askedTime)}</span></div>
+                            <div><span className="text-blur">Thời gian hỏi</span> <span>{convertDateBefore(question?.createdAt)}</span></div>
                             <div><span className="text-blur">Thời gian chỉnh sửa</span> <span>{convertDateBefore(question?.updatedAt)}</span></div>
                             <div><span className="text-blur">Lượt xem</span> <span>{question?.view || 0}</span></div>
                         </div>

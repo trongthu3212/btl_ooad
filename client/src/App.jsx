@@ -56,8 +56,10 @@ function App() {
                 </Route>
                 <Route path="questions">
                     <Route index element={<QuestionsPage />} />
-                    <Route path=":idQuestion" element={<QuestionPage />} />
                     <Route path="ask" element={<AskQuestionPage />} />
+                </Route>
+                <Route path="question">
+                    <Route path=":idQuestion" element={<QuestionPage />} />
                 </Route>
                 <Route path="*" element={<NotFoundPage />} />
 
