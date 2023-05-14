@@ -5,6 +5,91 @@ var commonPopulators = require('./CommonPopulators');
 const VoteController = require('./VoteController');
 const CommentController = require('./CommentController')
 
+const postNoFilterAggregate = [
+    {
+        $lookup: {
+            from: "answers",
+            localField: "_id",
+            foreignField: "post",
+            as: "answers"
+        }
+    },
+    {
+        $lookup: {
+            from: "users",
+            let: { authorId: "$author" },
+            pipeline: [
+                {
+                    $match: {
+                        $expr: {
+                            $eq: ["$_id", "$$authorId"]
+                        }
+                    }
+                },
+                {
+                    $project: {
+                        id: "$_id",
+                        _id: 0,
+                        reputation: 1,
+                        username: 1,
+                    }
+                },
+            ],
+            as: "authors"
+        }
+    },
+    {
+        $lookup: {
+            from: "courses",
+            let: { courseId: "$course" },
+            pipeline: [
+                {
+                    $match: {
+                        $expr: {
+                            $eq: ["$_id", "$$courseId"]
+                        }
+                    }
+                },
+                {
+                    $project: {
+                        id: "$_id",
+                        _id: 0,
+                        name: 1,
+                        code: 1
+                    }
+                },
+            ],
+            as: "courses"
+        }
+    },
+    {
+        $project: {
+            id: "$_id",
+            title: 1,
+            shortDescription: 1,
+            courseName: "$courseName",
+            courseCode: "$courseCode",
+            course: 1,
+            authorName: "$authorName",
+            author: { $arrayElemAt: ["$authors", 0] },
+            course: { $arrayElemAt: ["$courses", 0] },
+            answerCount: { $size: "$answers" }
+        }
+    }
+]
+
+const postUnansweredAggregate = [
+    postNoFilterAggregate[0],
+    {
+        $match: {
+            $expr: {
+                $eq: [{ $size: "$answers" }, 0]
+            }
+        }
+    },
+    ...postNoFilterAggregate.slice(1)
+]
+
 async function addPost(req, res) {  
     let title = req.body.title;
     let content = req.body.content;
@@ -41,6 +126,7 @@ async function addPost(req, res) {
 async function listPosts(req, res) {
     let page = req.query.page;
     let postPerPage = req.query.quantity;
+    let filter = req.query.filter;
 
     if ((page <= 0) || (postPerPage <= 0)) {
         res.status(400).send({ message: 'Page must be larger then 0!' });
@@ -51,21 +137,20 @@ async function listPosts(req, res) {
         let options = {
             offset: page * postPerPage,
             limit: postPerPage,
-            select: 'title shortDescription author course',
-            populate: commonPopulators.postPopulators,
-            lean: true,
-            sort: { _id: 'desc' }       // Id compare by creation date!
+            sort: { _id: 'desc' }
         }
 
-        const globalPostCount = await postModel.estimatedDocumentCount()
-    
-        await postModel.paginate({}, options)
+        var unansweredFilter = (filter?.toLowerCase() == "unanswered");
+
+        let aggreator = postModel.aggregate(unansweredFilter ? postUnansweredAggregate : postNoFilterAggregate)
+
+        await postModel.aggregatePaginate(aggreator, options)
             .then(async post => {
                 post.docs = await Promise.all(post.docs.map(async post => {
                     post.score = await VoteController.getPostVote(post._id);
                     return post;
                 }))
-                res.json({ posts: post.docs, globalPostCount: globalPostCount })
+                res.json({ posts: post.docs, globalPostCount: unansweredFilter ? post.totalDocs : await postModel.estimatedDocumentCount() })
             } )
             .catch(err => res.status(500).json(err));
     }

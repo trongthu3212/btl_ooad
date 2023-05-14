@@ -1,6 +1,6 @@
 var mongoose = require("mongoose");
-var mongoosePagination = require("mongoose-paginate-v2")
 const mongooseLeanVirtual = require('mongoose-lean-virtuals')
+const aggregatePaginate = require("mongoose-aggregate-paginate-v2");
 
 var postSchema = mongoose.Schema({
     title: {
@@ -23,7 +23,7 @@ var postSchema = mongoose.Schema({
     timestamps: true
 })
 
-postSchema.plugin(mongoosePagination)
+postSchema.plugin(aggregatePaginate)
 postSchema.plugin(mongooseLeanVirtual)
 
 module.exports = mongoose.model("post", postSchema);
