@@ -1,12 +1,11 @@
-import { useEffect, useRef, useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { Button } from "@mui/material";
 import MDEditor from "@uiw/react-md-editor";
-import { postQuestion } from "../../Api/question-api";
-import "./AskQuestionPage.scss";
-import { Button, Dialog, DialogActions, DialogContent, DialogTitle } from "@mui/material";
-import { toast } from "react-toastify";
-import { getCourse } from "Api/course";
+import { suggestCourse } from "Api/course";
 import { debounce } from "lodash";
+import { useCallback, useEffect, useRef, useState } from "react";
+import { toast } from "react-toastify";
+import "./AskQuestionPage.scss";
+import { postQuestion } from "Api/question-api";
 
 function AskQuestionPage() {
     const [content, setContent] = useState("");
@@ -19,16 +18,7 @@ function AskQuestionPage() {
 		});
 
 		const [isOpenListCourse, setIsOpenListCourse] = useState(false);
-		const [dataListCourse, setDataListCourse] = useState([
-			{id: 121, code: "INT 12312", name: "dad"},
-			{id: 121, code: "INT 1233123112", name: "fasdfa"},
-			{id: 121, code: "INT 3123", name: "dad"},
-			{id: 121, code: "INT 1231231312", name: "dadfasd"},
-			{id: 121, code: "INT 1231", name: "daadfadfd"},
-			{id: 121, code: "INT 121312", name: "fasdfaafad"},
-			{id: 121, code: "INT 1231312312", name: "dad"},
-			{id: 121, code: "INT 1241231312", name: "dafafdd"},
-		]);
+		const [dataListCourse, setDataListCourse] = useState([]);
 
 		const [isFetchingDataCourse, setIsFetchingDataCourse] = useState(false);
 
@@ -64,21 +54,26 @@ function AskQuestionPage() {
 		 */
     function handleCourse(e) {
         setCourse(e.target.value);
-				setIsFetchingDataCourse(true);
 				debounceSearchCourse(e.target.value);
-				if (!isOpenListCourse) {
-					setIsOpenListCourse(true);
-				}
     }
 		
-		const debounceSearchCourse = useRef(debounce((nextValue) => fetchDropdownOptions(nextValue), 600)).current;
+		const debounceSearchCourse = useCallback(debounce((nextValue) => fetchDropdownOptions(nextValue), 1000), []);
 
     function submitQuestion() {
-			toast.success('Đặt câu hỏi thành công');
+			postQuestion(data.title, data.content, data.course).then((res) => {
+				if (res) {
+					toast.success('Đặt câu hỏi thành công');
+					setData({
+						title: "",
+						content: "",
+						course: ""
+					})
+				}
+			})
     }
 
 		function handleContent(e) {
-			setData({...data, content: e.target.value});
+			setData({...data, content: e});
 		}
 
 		/**
@@ -91,12 +86,19 @@ function AskQuestionPage() {
 		}
 
 		function fetchDropdownOptions(key) {
-			getCourse(1, 6).then(res => {
-				if (!res) {
-					return;
+			if (!key) {
+				setIsOpenListCourse(false);
+				return;
+			}
+			setIsFetchingDataCourse(true);
+			suggestCourse(key, 6).then(res => {
+				if (res) {
+					setIsFetchingDataCourse(false);
+					setDataListCourse(res.courses);
+					if (!isOpenListCourse) {
+						setIsOpenListCourse(true);
+					}
 				}
-				setIsFetchingDataCourse(false);
-				setDataListCourse(res);
 			});
 		}
 
@@ -135,12 +137,12 @@ function AskQuestionPage() {
 						<div className="lds-ellipsis"><div></div><div></div><div></div><div></div></div>
 					</div>}
 					{isOpenListCourse && (<div className="popup d-flex flex-wrap" ref={dropdownRef}>
-							{dataListCourse?.map((item, index) =>
+							{dataListCourse.length > 0 ? dataListCourse.map((item, index) =>
 								(<div className="popup-item d-flex flex-column gap-1" key={index} onClick={() => selectCourse(item)}>
 									<div className="popup-item-title d-flex"><div className="tag">{item.code}</div></div>
 									<div className="popup-item-content">{item.name}</div>
 								</div>)
-							)}
+							) : (<span>Không có kết quả</span>)}
 					</div>)}
 				</div>
 			</div>

@@ -59,7 +59,7 @@ export const updatePost = async (post) => {
 
 export const increasePostView = async (idQuestion) => {
     const payload = new URLSearchParams({
-        _id: idQuestion,
+        id: idQuestion,
     });
 
     try {

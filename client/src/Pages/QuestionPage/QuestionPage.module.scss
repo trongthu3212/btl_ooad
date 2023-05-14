@@ -163,3 +163,14 @@
     font-size: 12px;
     color: #0074cc;
 }
+
+.commentInput {
+    padding-top: 16px;
+}
+
+.markBestAnswer {
+    opacity: 1;
+    svg {
+        fill: #2f6f44;
+    }
+}

@@ -144,16 +144,12 @@ async function increasePostView(req, res) {
     if ((obj == undefined) || (obj == null)) {
         res.sendStatus(404);
     } else {
-        if ((req.user.role.EDIT_ANY == true) || (req.user._id.equals(obj.author))) {
-            let viewObj = {}
-            viewObj.view = (obj.view ?? 0) + 1;
+        let viewObj = {}
+        viewObj.view = (obj.view ?? 0) + 1;
 
-            postModel.updateOne({ _id: req.body._id}, viewObj)
-                .then(post => { res.sendStatus(200) })
-                .catch(err => { res.json({ error: err })});
-        } else {
-            res.sendStatus(401);
-        }
+        postModel.updateOne({ _id: req.body._id}, viewObj)
+            .then(post => { res.sendStatus(200) })
+            .catch(err => { res.json({ error: err })});
     }
 }
 

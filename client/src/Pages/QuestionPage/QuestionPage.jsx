@@ -8,6 +8,7 @@ import { Skeleton } from "@mui/material";
 import moment from "moment/moment";
 import 'moment/locale/vi'
 import AuthContext from "Auth/AuthProvider";
+import { addAnswer } from "Api/answer";
 
 function QuestionPage() {
     let { idQuestion } = useParams();
@@ -22,16 +23,21 @@ function QuestionPage() {
 
     const [myAnswer, setMyAnswer] = useState("");
 
+    const [reload, setReload] = useState(false);
+
+    const [openAddComment, setOpenAddComment] = useState(false);
+
     useEffect(() => {
-        getPost(idQuestion).then((res) => {
-            setQuestion(res);
-            setAskedTime(res.createdAt);
+        increasePostView(idQuestion).then(() => {
+            getPost(idQuestion).then((res) => {
+                setQuestion(res);
+                setAskedTime(res.createdAt);
+            });
         });
+        
         getComment(idQuestion).then((res) => {
             setComment(res);
         })
-
-        increasePostView(idQuestion);
 
         let leftSidebar = document.querySelector(".sidebar-nav");
         let footer = document.querySelector('.footer');
@@ -53,6 +59,21 @@ function QuestionPage() {
             window.removeEventListener("scroll", handleScroll);
         };
     }, []);
+
+    useEffect(() => {
+        setQuestion(null);
+        getPost(idQuestion).then((res) => {
+            setQuestion(res);
+            setAskedTime(res.createdAt);
+        });
+        
+        getComment(idQuestion).then((res) => {
+            setComment(res);
+        })
+
+        setMyAnswer("");
+
+    }, [reload]);
 
     /**
      * Điều hướng sang trang câu hỏi
@@ -86,8 +107,15 @@ function QuestionPage() {
      * Post câu trả lời
      */
     function postAnswer() {
+        addAnswer(idQuestion, myAnswer).then(() => {
+            setReload(!reload);
+        })
+    }
+    
+    function acceptAnswer() {
 
     }
+
     return (
 		<div className={styles["question-page"]}>
 			<Sidebar />
@@ -166,12 +194,13 @@ function QuestionPage() {
                                             <span>{obj.content}</span> - <a href="#">{obj.author?.username}</a>
                                         </div>
                                     )))
-                                ) : 
-                                <Skeleton animation="wave" variant="rounded" width="100%" />}
+                                    ) : 
+                                    <Skeleton animation="wave" variant="rounded" width="100%" />}
                             </div>
-                            {auth && <div className={styles.addComment}>
+                            {auth && !openAddComment && <div className={styles.addComment} onClick={() => setOpenAddComment(true)}>
                                 Thêm bình luận
                             </div>}
+                            {openAddComment && <div className={styles.commentInput}><textarea  className="form-control"  rows="3"></textarea></div>}
                         </div>
                     </div>
                     {question?.answers && question.answers.length > 0 &&
@@ -189,6 +218,12 @@ function QuestionPage() {
                                         <button className={styles.btnVote}>
                                             <svg aria-hidden="true" className="svg-icon iconArrowDownLg" width="36" height="36" viewBox="0 0 36 36"><path d="M2 11h32L18 27 2 11Z"></path></svg>
                                         </button>
+                                        {answer?.accepted && <div className={`${styles.btnVote} ${styles.markBestAnswer}`}>
+                                            <svg aria-hidden="true" className="svg-icon iconCheckmarkLg" width="36" height="36" viewBox="0 0 36 36"><path d="m6 14 8 8L30 6v8L14 30l-8-8v-8Z"></path></svg>
+                                        </div>}
+                                        {question?.author.id == auth.id && !answer?.accepted && <button className={styles.btnVote} onClick={acceptAnswer}>
+                                            <svg aria-hidden="true" className="svg-icon iconCheckmarkLg" width="36" height="36" viewBox="0 0 36 36"><path d="m6 14 8 8L30 6v8L14 30l-8-8v-8Z"></path></svg>
+                                        </button>}
                                     </div>
                                     <div className={`${styles.questionDetail} flex-grow-1`}>
                                         <div className={styles.content}>
@@ -196,14 +231,14 @@ function QuestionPage() {
                                         </div>
                                         <div className="d-flex justify-content-between mt-5">
                                             <span className={styles.edit}>{auth && "Chỉnh sửa"}</span>
-                                            {question?.updatedAt && <span className={styles.actionTime}>Đã chỉnh sửa {convertDateTime(question.updatedAt)}</span>}
+                                            {answer?.updatedAt && <span className={styles.actionTime}>Đã chỉnh sửa {convertDateTime(answer.updatedAt)}</span>}
                                             <div className={styles.userInfo}>
-                                                {question?.createdAt && <span className={styles.actionTime}>Đã hỏi {convertDateTime(question.createdAt)}</span>}
+                                                {answer?.createdAt && <span className={styles.actionTime}>Đã trả lời {convertDateTime(answer.createdAt)}</span>}
                                                 <div className="d-flex">
-                                                    {question ? <img src="" alt="" width={32} height={32} className={styles.avatar} />
+                                                    {answer ? <img src="" alt="" width={32} height={32} className={styles.avatar} />
                                                         : <Skeleton animation="wave" variant="circular" width={32} height={32} />}
                                                     <div className={styles.userDetail}>
-                                                        {question ? <a href="">{question?.author.username}</a>
+                                                        {answer ? <a href="">{answer?.author.username}</a>
                                                             : <Skeleton animation="wave" variant="rounded" width={80} height={20} />}
                                                         <div className={styles.reputationScore}></div>
                                                     </div>
@@ -233,7 +268,7 @@ function QuestionPage() {
                             Câu trả lời của bạn
                         </h2>
                         <MDEditor value={myAnswer} onChange={setMyAnswer} height="250" />
-                        <button
+                        <button disabled={!myAnswer}
                             className={`btn btn-primary d-flex align-items-center ${styles.btnAskQuestion}`}
                             onClick={postAnswer}
                         >

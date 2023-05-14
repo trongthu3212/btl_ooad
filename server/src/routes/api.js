@@ -29,7 +29,7 @@ routers.post('/updateRole', authEnsurance.ensureLoggedIn, userController.updateR
 routers.post('/user/update', upload.single('userAvatar'), authEnsurance.ensureLoggedIn, userController.updateInfo)
 routers.post('/addPost', authEnsurance.ensureLoggedIn, postController.add)
 routers.put('/updatePost', authEnsurance.ensureLoggedIn, postController.update)
-routers.put('/post/increaseView', authEnsurance.ensureLoggedIn, postController.increaseView)
+routers.put('/post/increaseView', postController.increaseView)
 routers.delete('/deletePost', authEnsurance.ensureLoggedIn, postController.delete)
 
 routers.post('/course/create', authEnsurance.ensureLoggedIn, courseController.addCourse)
@@ -57,7 +57,7 @@ routers.get('/course/list', CourseController.getAllCourses)
 routers.post('/course/add', AuthEnsurance.ensureLoggedIn, CourseController.addCourse)
 routers.post('/course/enroll', AuthEnsurance.ensureLoggedIn, CourseController.enrollCourse)
 routers.post('/course/leave', AuthEnsurance.ensureLoggedIn, CourseController.leaveCourse)
-routers.get('/course/suggest', CourseController.suggestCourses)
+routers.post('/course/suggest', CourseController.suggestCourses)
 
 routers.get('/user/getCourses/:id', CourseController.getParticipateCourses)
 
