@@ -9,6 +9,7 @@ import moment from "moment/moment";
 import 'moment/locale/vi'
 import AuthContext from "Auth/AuthProvider";
 import { addAnswer } from "Api/answer";
+import { toast } from "react-toastify";
 
 function QuestionPage() {
     let { idQuestion } = useParams();
@@ -19,18 +20,18 @@ function QuestionPage() {
     const [comment, setComment] = useState();
     const [question, setQuestion] = useState();
 
+    const [answers, setAnswers] = useState([]);
+
     const [askedTime, setAskedTime] = useState("");
 
     const [myAnswer, setMyAnswer] = useState("");
-
-    const [reload, setReload] = useState(false);
 
     const [openAddComment, setOpenAddComment] = useState(false);
 
     useEffect(() => {
         increasePostView(idQuestion).then(() => {
             getPost(idQuestion).then((res) => {
-                setQuestion(res);
+                setQuestion({...res, myComment: "", isShowCommentInput: false});
                 setAskedTime(res.createdAt);
             });
         });
@@ -59,21 +60,6 @@ function QuestionPage() {
             window.removeEventListener("scroll", handleScroll);
         };
     }, []);
-
-    useEffect(() => {
-        setQuestion(null);
-        getPost(idQuestion).then((res) => {
-            setQuestion(res);
-            setAskedTime(res.createdAt);
-        });
-        
-        getComment(idQuestion).then((res) => {
-            setComment(res);
-        })
-
-        setMyAnswer("");
-
-    }, [reload]);
 
     /**
      * Điều hướng sang trang câu hỏi
@@ -107,13 +93,27 @@ function QuestionPage() {
      * Post câu trả lời
      */
     function postAnswer() {
-        addAnswer(idQuestion, myAnswer).then(() => {
-            setReload(!reload);
+        addAnswer(idQuestion, myAnswer).then((res) => {
+            if (res) {
+                setAnswers([...answers, {}]);
+                toast.success('Thêm câu trả lời thành công');
+            } else {
+                toast.error('Có lỗi xảy ra');
+            }
         })
     }
     
     function acceptAnswer() {
 
+    }
+
+    function addComment(type, id) {
+        // comment câu hỏi, còn lại là câu trả lời
+        if (type == 1) {
+            setQuestion({...question, isShowCommentInput: false})
+        } else {
+
+        }
     }
 
     return (
@@ -200,15 +200,23 @@ function QuestionPage() {
                             {auth && !openAddComment && <div className={styles.addComment} onClick={() => setOpenAddComment(true)}>
                                 Thêm bình luận
                             </div>}
-                            {openAddComment && <div className={styles.commentInput}><textarea  className="form-control"  rows="3"></textarea></div>}
+                            {openAddComment && <div className={styles.commentInput}>
+                                <textarea  className="form-control" rows="3" value={question.myComment} 
+                                    onChange={(e) => setQuestion({...question, myComment: e.target.value})}></textarea>
+                                <div className="d-flex justify-content-end mt-3">
+                                    <button type="button" class="btn btn-outline-secondary me-4" 
+                                        onClick={() => setOpenAddComment(false)}>Huỷ</button>
+                                    <button type="button" class="btn btn-primary" onClick={addComment}>Thêm</button>
+                                </div>
+                            </div>}
                         </div>
                     </div>
-                    {question?.answers && question.answers.length > 0 &&
+                    {answers && answers.length > 0 &&
                         <div className={styles.answerSection}>
                             <h2 className={styles.countAnswer}>
-                                {question.answers.length} câu trả lời
+                                {answers.length} câu trả lời
                             </h2>
-                            {question.answers.map((answer, idx) => (
+                            {answers.map((answer, idx) => (
                                 <div className={styles["question-content"]} key={idx}>
                                     <div className={styles.voteSection}>
                                         <button className={styles.btnVote}>
@@ -221,7 +229,7 @@ function QuestionPage() {
                                         {answer?.accepted && <div className={`${styles.btnVote} ${styles.markBestAnswer}`}>
                                             <svg aria-hidden="true" className="svg-icon iconCheckmarkLg" width="36" height="36" viewBox="0 0 36 36"><path d="m6 14 8 8L30 6v8L14 30l-8-8v-8Z"></path></svg>
                                         </div>}
-                                        {question?.author.id == auth.id && !answer?.accepted && <button className={styles.btnVote} onClick={acceptAnswer}>
+                                        {auth && question?.author.id == auth.id && !answer?.accepted && <button className={styles.btnVote} onClick={acceptAnswer}>
                                             <svg aria-hidden="true" className="svg-icon iconCheckmarkLg" width="36" height="36" viewBox="0 0 36 36"><path d="m6 14 8 8L30 6v8L14 30l-8-8v-8Z"></path></svg>
                                         </button>}
                                     </div>

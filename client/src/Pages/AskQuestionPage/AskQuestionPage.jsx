@@ -68,6 +68,8 @@ function AskQuestionPage() {
 						content: "",
 						course: ""
 					})
+				} else {
+					toast.error('Có lỗi xảy ra');
 				}
 			})
     }

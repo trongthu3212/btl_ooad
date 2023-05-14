@@ -38,8 +38,6 @@ function QuestionsPage() {
     const [total, setTotal] = useState(0);
 
     useEffect(() => {
-        console.log("first render");
-
         let leftSidebar = document.querySelector(".sidebar-nav");
         let footer = document.querySelector('.footer');
 
@@ -63,7 +61,6 @@ function QuestionsPage() {
 
     useEffect(() => {
         setIsLoading(true);
-        console.log("change page");
         getPostsPaging(paging.page, paging.pageSize).then(res => {
             setData(res.posts);
             setTotal(res.globalPostCount);
