@@ -13,6 +13,7 @@ var answerController = require('../controllers/AnswerController');
 const VoteController = require('../controllers/VoteController');
 const CourseController = require('../controllers/CourseController');
 const AuthEnsurance = require('../middleware/AuthEnsurance');
+const PostController = require('../controllers/PostController');
 
 routers.get('/test', testController.execute)
 routers.get('/emailExisted', userController.emailExisted)
@@ -60,5 +61,6 @@ routers.post('/course/leave', AuthEnsurance.ensureLoggedIn, CourseController.lea
 routers.post('/course/suggest', CourseController.suggestCourses)
 
 routers.get('/user/getCourses/:id', CourseController.getParticipateCourses)
+routers.get('/search', PostController.searchPosts)
 
 module.exports = routers;

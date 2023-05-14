@@ -5,6 +5,16 @@ var commonPopulators = require('./CommonPopulators');
 const VoteController = require('./VoteController');
 const CommentController = require('./CommentController')
 
+const postSearchAggregate = text => [
+    {
+        $match: {
+            $or: [
+                { $text: { $search: text, $caseSensitive: false, $diacriticSensitive: false } }
+            ]
+        }
+    }
+]
+
 const postNoFilterAggregate = [
     {
         $lookup: {
@@ -156,6 +166,38 @@ async function listPosts(req, res) {
     }
 }
 
+async function searchPosts(req, res) {
+    let page = req.query.page;
+    let postPerPage = req.query.quantity;
+    let keyword = req.query.keyword;
+
+    if ((page <= 0) || (postPerPage <= 0)) {
+        res.status(400).send({ message: 'Page must be larger then 0!' });
+    } else {
+        // Pagination system based on offset 0
+        page -= 1;
+
+        let options = {
+            offset: page * postPerPage,
+            limit: postPerPage,
+            sort: { _id: 'desc' }
+        }
+
+        let aggreator = postModel.aggregate(postSearchAggregate(keyword))
+
+        await postModel.aggregatePaginate(aggreator, options)
+            .then(async post => {
+                post.docs = await Promise.all(post.docs.map(async post => {
+                    post.score = await VoteController.getPostVote(post._id);
+                    return post;
+                }))
+                res.json({ posts: post.docs, globalPostCount: post.totalDocs })
+            } )
+            .catch(err =>
+                res.status(500).json(err));
+    }
+}
+
 async function getPost(req, res) {
     let {idquestion} = req.params;
     let post = await postModel.findById(idquestion)
@@ -250,5 +292,6 @@ module.exports = {
     getAll: getAllPosts,
     update: updatePost,
     delete: deletePost,
-    increaseView: increasePostView
+    increaseView: increasePostView,
+    searchPosts: searchPosts
 }

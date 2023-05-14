@@ -25,5 +25,6 @@ var postSchema = mongoose.Schema({
 
 postSchema.plugin(aggregatePaginate)
 postSchema.plugin(mongooseLeanVirtual)
+postSchema.index({ content: "text", title: "text" })
 
 module.exports = mongoose.model("post", postSchema);
