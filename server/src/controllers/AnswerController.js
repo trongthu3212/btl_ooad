@@ -12,7 +12,7 @@ async function addAnswer(req, res) {
     });
 
     await answer.save()
-        .then(answer => { res.json({ answerId: answer._id }); })
+        .then(answer => { res.json(answer); })
         .catch(err => { res.json({ error: err })});
 }
 
