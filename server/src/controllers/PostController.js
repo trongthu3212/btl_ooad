@@ -145,13 +145,14 @@ async function deletePost(req, res) {
 
 async function increasePostView(req, res) {
     let obj = await postModel.findById(req.body.id);
+
     if ((obj == undefined) || (obj == null)) {
         res.sendStatus(404);
     } else {
         let viewObj = {}
         viewObj.view = (obj.view ?? 0) + 1;
 
-        postModel.updateOne({ _id: req.body._id}, viewObj)
+        postModel.updateOne({ _id: req.body.id }, viewObj)
             .then(post => { res.sendStatus(200) })
             .catch(err => { res.json({ error: err })});
     }
