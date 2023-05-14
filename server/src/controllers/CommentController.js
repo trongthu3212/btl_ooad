@@ -35,16 +35,16 @@ async function addComment(req, res) {
         .catch(err => { res.json({ error: err })});
 }
 
-async function listComment(req, res) {
-    let postId = req.query.postId
-    let answerId = req.query.answerId
+async function listCommentDetail(idComposite, res, resultProvider) {
+    let postId = idComposite.postId
+    let answerId = idComposite.answerId
 
     if (!postId && !answerId) {
         res.status(403).json({
             message: "Answer ID and post ID are all empty!"
         });
 
-        return;
+        return false;
     }
 
     let findVar = {}
@@ -64,12 +64,17 @@ async function listComment(req, res) {
                 return comment
             }))
 
-            res.json(comments)
+            resultProvider(comments)
         })
         .catch(err => res.status(500).json({ error: err }))
 }
 
+async function listComment(req, res) {
+    listCommentDetail(req.query, res, comments => { res.json(comments) })
+}
+
 module.exports = {
     addComment: addComment,
-    listComment: listComment
+    listComment: listComment,
+    listCommentDetail: listCommentDetail
 }

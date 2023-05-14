@@ -3,6 +3,7 @@ var postConfig = require('../config/post');
 var answerModel = require('../models/answer');
 var commonPopulators = require('./CommonPopulators');
 const VoteController = require('./VoteController');
+const CommentController = require('./CommentController')
 
 async function addPost(req, res) {  
     let title = req.body.title;
@@ -80,6 +81,7 @@ async function getPost(req, res) {
         res.status(404);
     } else {
         post.score = await VoteController.getPostVote(idquestion)
+        await CommentController.listCommentDetail({ postId: post._id }, res, comments => { post.comments = comments })
 
         await answerModel.find({ post: idquestion })
             .populate(commonPopulators.answerPopulators)
@@ -87,6 +89,8 @@ async function getPost(req, res) {
             .then(async answers => {
                 post.answers = await Promise.all(answers.map(async answer => {
                     answer.score = await VoteController.getAnswerVote(answer._id);
+                    await CommentController.listCommentDetail({ answerId: answer._id }, res, comments => { answer.comments = comments })
+                    
                     return answer;
                 }));
 
