@@ -10,6 +10,7 @@ import 'moment/locale/vi'
 import AuthContext from "Auth/AuthProvider";
 import { addAnswer } from "Api/answer";
 import { toast } from "react-toastify";
+import { addComment } from "Api/comment";
 
 function QuestionPage() {
     let { idQuestion } = useParams();
@@ -17,7 +18,6 @@ function QuestionPage() {
 
     const navigate = useNavigate();
 
-    const [comment, setComment] = useState();
     const [question, setQuestion] = useState();
 
     const [answers, setAnswers] = useState([]);
@@ -29,18 +29,23 @@ function QuestionPage() {
     useEffect(() => {
         let isIncreaseView = sessionStorage.getItem(`increaseView${idQuestion}`);
         getPost(idQuestion).then((res) => {
-            if (isIncreaseView) {
-                setQuestion({...res, myComment: "", isShowCommentInput: false, view: res.view + 1});
-                increasePostView(idQuestion);
-                sessionStorage.removeItem(`increaseView${idQuestion}`);
-            } else {
-                setQuestion({...res, myComment: "", isShowCommentInput: false });
+            if (res) {
+                if (isIncreaseView) {
+                    setQuestion({...res, myComment: "", isShowCommentInput: false, view: res.view + 1});
+                    increasePostView(idQuestion);
+                    sessionStorage.removeItem(`increaseView${idQuestion}`);
+                } else {
+                    setQuestion({...res, myComment: "", isShowCommentInput: false });
+                }
+                if (res.answers) {
+                    const tmp = res.answers.map((answer) => {
+                        return {...answer, isShowCommentInput: false};
+                    })
+                    setAnswers(tmp);
+                }
             }
+            
         });
-        
-        getComment(idQuestion).then((res) => {
-            setComment(res);
-        })
 
         let leftSidebar = document.querySelector(".sidebar-nav");
         let footer = document.querySelector('.footer');
@@ -105,17 +110,39 @@ function QuestionPage() {
         })
     }
     
-    function acceptAnswer() {
+    function acceptAnswer(id) {
 
     }
 
-    function addComment(type, id) {
+    function handleAddComment(type, id) {
         // comment câu hỏi, còn lại là câu trả lời
-        if (type == 1) {
-            setQuestion({...question, isShowCommentInput: false})
-        } else {
 
-        }
+        type == 1 ?
+            addComment(id, question.myComment, type).then((res) => {
+                if (res) {
+                    let tmp = [...question.comments];
+                    tmp.push(res);
+                    setQuestion({...question, isShowCommentInput: false, comments: tmp});
+                }
+            })
+        :
+            addComment(id, question.myComment, type).then((res) => {
+                if (res) {
+                    let tmp = [...question.comments];
+                    tmp.push(res);
+                    setAnswers({...question, isShowCommentInput: false, comments: tmp});
+                }
+            })
+    }
+
+    function openCommentAnswer(id, isOpen) {
+        const temp = answers.map((answer) => {
+            if (answer.id === id) {
+                return {...answer, isShowCommentInput: isOpen};
+            }
+            return answer;
+        })
+        setAnswers(temp);
     }
 
     return (
@@ -190,8 +217,8 @@ function QuestionPage() {
                                 </div>
                             </div>
                             <div className={styles.commentSection}>
-                                {comment ? (
-                                    (comment.map((obj, idx) => (
+                                {question?.comments ? (
+                                    (question.comments.map((obj, idx) => (
                                         <div key={idx} className={styles.comment}>
                                             <span>{obj.content}</span> - <a href="#">{obj.author?.username}</a>
                                         </div>
@@ -199,16 +226,17 @@ function QuestionPage() {
                                     ) : 
                                     <Skeleton animation="wave" variant="rounded" width="100%" />}
                             </div>
-                            {auth && !openAddComment && <div className={styles.addComment} onClick={() => setOpenAddComment(true)}>
+                            {auth && !question?.isShowCommentInput && <div className={styles.addComment} 
+                                onClick={() => setQuestion({...question, isShowCommentInput: true})}>
                                 Thêm bình luận
                             </div>}
-                            {openAddComment && <div className={styles.commentInput}>
+                            {question?.isShowCommentInput && <div className={styles.commentInput}>
                                 <textarea  className="form-control" rows="3" value={question.myComment} 
                                     onChange={(e) => setQuestion({...question, myComment: e.target.value})}></textarea>
                                 <div className="d-flex justify-content-end mt-3">
-                                    <button type="button" class="btn btn-outline-secondary me-4" 
-                                        onClick={() => setOpenAddComment(false)}>Huỷ</button>
-                                    <button type="button" class="btn btn-primary" onClick={addComment}>Thêm</button>
+                                    <button type="button" className="btn btn-outline-secondary me-4" 
+                                        onClick={() => setQuestion({...question, isShowCommentInput: false})}>Huỷ</button>
+                                    <button type="button" className="btn btn-primary" onClick={() => handleAddComment(1, idQuestion)}>Thêm</button>
                                 </div>
                             </div>}
                         </div>
@@ -248,7 +276,7 @@ function QuestionPage() {
                                                     {answer ? <img src="" alt="" width={32} height={32} className={styles.avatar} />
                                                         : <Skeleton animation="wave" variant="circular" width={32} height={32} />}
                                                     <div className={styles.userDetail}>
-                                                        {answer ? <a href="">{answer?.author.username}</a>
+                                                        {answer ? <a href="">{answer?.author?.username}</a>
                                                             : <Skeleton animation="wave" variant="rounded" width={80} height={20} />}
                                                         <div className={styles.reputationScore}></div>
                                                     </div>
@@ -256,8 +284,8 @@ function QuestionPage() {
                                             </div>
                                         </div>
                                         <div className={styles.commentSection}>
-                                            {comment ? (
-                                                (comment.map((obj, idx) => (
+                                            {answer?.comments ? (
+                                                (answer.comments.map((obj, idx) => (
                                                     <div key={idx} className={styles.comment}>
                                                         <span>{obj.content}</span> - <a href="#">{obj.author?.username}</a>
                                                     </div>
@@ -265,8 +293,18 @@ function QuestionPage() {
                                             ) :
                                                 <Skeleton animation="wave" variant="rounded" width="100%" />}
                                         </div>
-                                        {auth && <div className={styles.addComment}>
+                                        {auth && !answer?.isShowCommentInput && <div className={styles.addComment} 
+                                            onClick={() => openCommentAnswer(answer.id, true)}>
                                             Thêm bình luận
+                                        </div>}
+                                        {answer?.isShowCommentInput && <div className={styles.commentInput}>
+                                            <textarea  className="form-control" rows="3" value={question.myComment} 
+                                                onChange={(e) => setQuestion({...question, myComment: e.target.value})}></textarea>
+                                            <div className="d-flex justify-content-end mt-3">
+                                                <button type="button" className="btn btn-outline-secondary me-4" 
+                                                    onClick={() => openCommentAnswer(answer.id, false)}>Huỷ</button>
+                                                <button type="button" className="btn btn-primary" onClick={() => handleAddComment(2, answer.id)}>Thêm</button>
+                                            </div>
                                         </div>}
                                     </div>
                                 </div>
