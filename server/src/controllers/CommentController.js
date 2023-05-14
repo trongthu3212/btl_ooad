@@ -31,7 +31,7 @@ async function addComment(req, res) {
     var comment = new commentModel(commentObj);
 
     await comment.save()
-        .then(comment => { res.json({ commentId: comment._id }); })
+        .then(comment => { res.json(comment); })
         .catch(err => { res.json({ error: err })});
 }
 
