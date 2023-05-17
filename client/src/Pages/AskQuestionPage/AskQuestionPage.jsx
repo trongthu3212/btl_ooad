@@ -8,7 +8,6 @@ import "./AskQuestionPage.scss";
 import { postQuestion } from "Api/question-api";
 
 function AskQuestionPage() {
-    const [content, setContent] = useState("");
     const [course, setCourse] = useState("");
 
 		const [data, setData] = useState({
@@ -107,20 +106,20 @@ function AskQuestionPage() {
     return (
 		<div className="ask-question-page">
 			<div className="ask-question-page__header">
-				Ask a public question
+				Đặt câu hỏi công khai
 			</div>
 			<div className="ask-question-page--ask">
 				<div className="ask__title">
-					Title
+					Tiêu đề
 					<input
 						type="text"
 						value={data.title}
 						onChange={handleTitle}
-						placeholder="e.g. Is there an R function for finding the index of an element in a vector?"
+						placeholder="VD: Cách tìm một phần tử trong mảng?"
 					/>
 				</div>
 				<div className="ask__body" data-color-mode="light">
-					Body
+					Nội dung
 					<MDEditor
 						value={data.content}
 						onChange={handleContent}
@@ -148,7 +147,8 @@ function AskQuestionPage() {
 					</div>)}
 				</div>
 			</div>
-			<Button variant="contained" onClick={submitQuestion} className="ask__submit">Đặt câu hỏi</Button>
+			<button type="button" class="btn btn-primary mt-4" onClick={() => submitQuestion} 
+				disabled={!data.title || !data.content || !data.course}>Đặt câu hỏi</button>
 		</div>
 	);
 }

@@ -13,3 +13,21 @@ export const addAnswer = async (postId, content) => {
       console.log(error);
   }
 };
+
+export const changeVoteAnswer = async (id, type) => {
+  try {
+      const { data } = await axios.post(`answer/${type}/${id}`);
+      return data;
+  } catch (error) {
+      console.log(error);
+  }
+};
+
+export const acceptAnswerById = async (id) => {
+  try {
+      const { data } = await axios.post(`answer/accept/${id}`);
+      return data;
+  } catch (error) {
+      console.log(error);
+  }
+};

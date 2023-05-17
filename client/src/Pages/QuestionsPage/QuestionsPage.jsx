@@ -61,21 +61,12 @@ function QuestionsPage() {
 
     useEffect(() => {
         setIsLoading(true);
-        getPostsPaging(paging.page, paging.pageSize).then(res => {
+        getPostsPaging(paging.page, paging.pageSize, state).then(res => {
             setData(res.posts);
             setTotal(res.globalPostCount);
             setIsLoading(false);
         })
-    }, [paging.page, paging.pageSize])
-
-    /**
-     * Thay đổi nhóm câu hỏi
-     * @param {*} e 
-     * @param {*} newVal 
-     */
-    function handleState(e, newVal) {
-        setState(newVal);
-    }
+    }, [paging.page, paging.pageSize, state])
 
     /**
      * Điều hướng sang trang câu hỏi
@@ -158,8 +149,8 @@ function QuestionsPage() {
 									className={styles["preview-question"]}
 									key={obj.id}
 								>
-									<div onClick={() => viewQuestion(obj.id)} className={styles.title}>
-										{obj.title}
+									<div>
+										<span onClick={() => viewQuestion(obj.id)} className={styles.title}>{obj.title}</span>
 									</div>
 									<div className={styles.content}>
 										{obj.shortDescription}

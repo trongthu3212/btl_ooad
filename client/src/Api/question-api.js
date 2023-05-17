@@ -70,9 +70,9 @@ export const increasePostView = async (idQuestion) => {
     }
 };
 
-export const getPostsPaging = async (page, pageSize) => {
+export const getPostsPaging = async (page, pageSize, filter) => {
     try {
-        const { data } = await axios.get(`listPosts?page=${page}&quantity=${pageSize}`);
+        const { data } = await axios.get(`listPosts?page=${page}&quantity=${pageSize}&filter=${filter}`);
         return data;
     } catch (error) {
         console.log(error);
@@ -82,6 +82,15 @@ export const getPostsPaging = async (page, pageSize) => {
 export const getComment = async (id) => {
     try {
         const { data } = await axios.get(`comment/list?postId=${id}`);
+        return data;
+    } catch (error) {
+        console.log(error);
+    }
+};
+
+export const changeVoteQuestion = async (id, type) => {
+    try {
+        const { data } = await axios.post(`post/${type}/${id}`);
         return data;
     } catch (error) {
         console.log(error);
