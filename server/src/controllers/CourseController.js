@@ -106,9 +106,11 @@ async function suggestCourses(req, res) {
     let keyword = req.body.keyword
     let limit = req.body.limit
 
-    await courseModel.find({ $or: [ 
-        { "code": { $regex: '.*' + keyword + '.*', $options: 'i' } },
-        { "name": { $regex: '.*' + keyword + '.*', $options: 'i' } }
+    await courseModel.find({
+        $or: [
+            { "code": { $regex: '.*' + keyword + '.*', $options: 'i' } },
+            { "name": { $regex: '.*' + keyword + '.*', $options: 'i' } },
+            { $text: { $search: keyword, $caseSensitive: false, $diacriticSensitive: false } }
     ]}).limit(limit)
         .then(courses => res.json({ courses: courses }))
         .catch(err => res.status(500).json({ error: err }))

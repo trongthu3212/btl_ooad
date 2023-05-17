@@ -55,18 +55,17 @@ async function modifyVote(req, res, modelName, newVoteCount) {
     }
 }
 
-async function getCurrentUserVote(req, res, modelName) {
+async function getCurrentUserVoteDetail(req, id, modelName) {
     let searchReq = { user: req.user._id }
-    searchReq[modelName] = req.params.id
+    searchReq[modelName] = id
 
-    existingVote = await voteModel.findOne(searchReq)
-        .catch(err => res.sendStatus(500).json({ error: err }))
+    var result = await voteModel.findOne(searchReq);
+    return result.vote ?? 0;
+}
 
-    if (existingVote) {
-        res.json({ vote: existingVote.vote })
-    } else {
-        res.json({ vote: 0 })
-    }
+async function getCurrentUserVote(req, res, modelName) {
+    let vote = await getCurrentUserVoteDetail(req, req.params.id, modelName)
+    res.json({ vote: vote })
 }
 
 async function getTotalVote(req, res, modelName) {
@@ -85,6 +84,10 @@ async function downvoteComment(req, res) {
     await modifyVote(req, res, 'comment', -1)
 }
 
+async function zerovoteComment(req, res) {
+    await modifyVote(req, res, 'comment', 0)
+}
+
 async function upvoteAnswer(req, res) {
     await modifyVote(req, res, 'answer', 1)
 }
@@ -93,12 +96,40 @@ async function downvoteAnswer(req, res) {
     await modifyVote(req, res, 'answer', -1)
 }
 
+async function zerovoteAnswer(req, res) {
+    await modifyVote(req, res, 'answer', 0)
+}
+
 async function upvotePost(req, res) {
     await modifyVote(req, res, 'post', 1)
 }
 
 async function downvotePost(req, res) {
     await modifyVote(req, res, 'post', -1)
+}
+
+async function zerovotePost(req, res) {
+    await modifyVote(req, res, 'post', 0)
+}
+
+async function getCurrentUserCommentVoteDetail(req, id) {
+    return await getCurrentUserVoteDetail(req, id, 'comment')
+}
+
+async function getCurrentUserPostVoteDetail(req, id) {
+    return await getCurrentUserVoteDetail(req, id, 'post')
+}
+
+async function getCurrentUserAnswerVoteDetail(req, id) {
+    return await getCurrentUserVoteDetail(req, id, 'answer')
+}
+
+async function getCurrentUserAnswerVote(req, res) {
+    await getCurrentUserVote(req, res, 'answer')
+}
+
+async function getCurrentUserPostVote(req, res) {
+    await getCurrentUserVote(req, res, 'post')
 }
 
 async function getCurrentUserCommentVote(req, res) {
@@ -133,6 +164,9 @@ module.exports = {
     getCurrentUserPostVote: getCurrentUserPostVote,
     getCurrentUserAnswerVote: getCurrentUserAnswerVote,
     getCurrentUserCommentVote: getCurrentUserCommentVote,
+    getCurrentUserCommentVoteDetail: getCurrentUserCommentVoteDetail,
+    getCurrentUserPostVoteDetail: getCurrentUserPostVoteDetail,
+    getCurrentUserAnswerVoteDetail: getCurrentUserAnswerVoteDetail,
 
     getPostTotalVote: getPostTotalVote,
     getAnswerTotalVote: getAnswerTotalVote,
@@ -140,8 +174,11 @@ module.exports = {
 
     upvotePost: upvotePost,
     downvotePost: downvotePost,
+    zerovotePost: zerovotePost,
     upvoteAnswer: upvoteAnswer,
     downvoteAnswer: downvoteAnswer,
+    zerovoteAnswer: zerovoteAnswer,
     upvoteComment: upvoteComment,
-    downvoteComment: downvoteComment
+    downvoteComment: downvoteComment,
+    zerovoteComment: zerovoteComment,
 }

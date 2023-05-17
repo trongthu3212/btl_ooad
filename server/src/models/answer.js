@@ -17,5 +17,6 @@ var answerSchema = mongoose.Schema({
 })
 
 answerSchema.plugin(mongooseLeanVirtual)
+answerSchema.index({ content: "text" })
 
 module.exports = mongoose.model("answer", answerSchema);

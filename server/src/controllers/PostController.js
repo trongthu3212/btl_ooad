@@ -5,6 +5,16 @@ var commonPopulators = require('./CommonPopulators');
 const VoteController = require('./VoteController');
 const CommentController = require('./CommentController')
 
+const postSearchAggregate = text => [
+    {
+        $match: {
+            $or: [
+                { $text: { $search: text, $caseSensitive: false, $diacriticSensitive: false } }
+            ]
+        }
+    }
+]
+
 const postNoFilterAggregate = [
     {
         $lookup: {
@@ -148,11 +158,46 @@ async function listPosts(req, res) {
             .then(async post => {
                 post.docs = await Promise.all(post.docs.map(async post => {
                     post.score = await VoteController.getPostVote(post._id);
+                    if (req.user) {
+                        post.voted = await VoteController.getCurrentUserPostVoteDetail(req, post._id);
+                    }
                     return post;
                 }))
                 res.json({ posts: post.docs, globalPostCount: unansweredFilter ? post.totalDocs : await postModel.estimatedDocumentCount() })
             } )
             .catch(err => res.status(500).json(err));
+    }
+}
+
+async function searchPosts(req, res) {
+    let page = req.query.page;
+    let postPerPage = req.query.quantity;
+    let keyword = req.query.keyword;
+
+    if ((page <= 0) || (postPerPage <= 0)) {
+        res.status(400).send({ message: 'Page must be larger then 0!' });
+    } else {
+        // Pagination system based on offset 0
+        page -= 1;
+
+        let options = {
+            offset: page * postPerPage,
+            limit: postPerPage,
+            sort: { _id: 'desc' }
+        }
+
+        let aggreator = postModel.aggregate(postSearchAggregate(keyword))
+
+        await postModel.aggregatePaginate(aggreator, options)
+            .then(async post => {
+                post.docs = await Promise.all(post.docs.map(async post => {
+                    post.score = await VoteController.getPostVote(post._id);
+                    return post;
+                }))
+                res.json({ posts: post.docs, globalPostCount: post.totalDocs })
+            } )
+            .catch(err =>
+                res.status(500).json(err));
     }
 }
 
@@ -166,7 +211,11 @@ async function getPost(req, res) {
         res.status(404);
     } else {
         post.score = await VoteController.getPostVote(idquestion)
-        await CommentController.listCommentDetail({ postId: post._id }, res, comments => { post.comments = comments })
+        if (req.user) {
+            post.voted = await VoteController.getCurrentUserPostVoteDetail(req, idquestion);
+        }
+
+        await CommentController.listCommentDetail({ postId: post._id }, req, res, comments => { post.comments = comments })
 
         await answerModel.find({ post: idquestion })
             .populate(commonPopulators.answerPopulators)
@@ -174,14 +223,18 @@ async function getPost(req, res) {
             .then(async answers => {
                 post.answers = await Promise.all(answers.map(async answer => {
                     answer.score = await VoteController.getAnswerVote(answer._id);
-                    await CommentController.listCommentDetail({ answerId: answer._id }, res, comments => { answer.comments = comments })
+                    if (req.user) {
+                        answer.voted = await VoteController.getCurrentUserAnswerVoteDetail(req, answer._id);
+                    }
+                    await CommentController.listCommentDetail({ answerId: answer._id }, req, res, comments => { answer.comments = comments })
                     
                     return answer;
                 }));
 
                 res.json(post);
             })
-            .catch(err => res.status(500).json({ error: err }));
+            .catch(err => 
+                res.json({ error: err }));
     }
 }
 
@@ -250,5 +303,6 @@ module.exports = {
     getAll: getAllPosts,
     update: updatePost,
     delete: deletePost,
-    increaseView: increasePostView
+    increaseView: increasePostView,
+    searchPosts: searchPosts
 }

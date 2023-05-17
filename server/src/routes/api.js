@@ -13,6 +13,7 @@ var answerController = require('../controllers/AnswerController');
 const VoteController = require('../controllers/VoteController');
 const CourseController = require('../controllers/CourseController');
 const AuthEnsurance = require('../middleware/AuthEnsurance');
+const PostController = require('../controllers/PostController');
 
 routers.get('/test', testController.execute)
 routers.get('/emailExisted', userController.emailExisted)
@@ -48,10 +49,13 @@ routers.get('/comment/getCurrentUserVote/:id', authEnsurance.ensureLoggedIn, Vot
 
 routers.post('/post/upvote/:id', authEnsurance.ensureLoggedIn, VoteController.upvotePost)
 routers.post('/post/downvote/:id', authEnsurance.ensureLoggedIn, VoteController.downvotePost)
+routers.post('/post/zerovote/:id', authEnsurance.ensureLoggedIn, VoteController.zerovotePost)
 routers.post('/answer/upvote/:id', authEnsurance.ensureLoggedIn, VoteController.upvoteAnswer)
 routers.post('/answer/downvote/:id', authEnsurance.ensureLoggedIn, VoteController.downvoteAnswer)
+routers.post('/answer/zerovote/:id', authEnsurance.ensureLoggedIn, VoteController.zerovoteAnswer)
 routers.post('/comment/upvote/:id', authEnsurance.ensureLoggedIn, VoteController.upvoteComment)
 routers.post('/comment/downvote/:id', authEnsurance.ensureLoggedIn, VoteController.downvoteComment)
+routers.post('/comment/zerovote/:id', authEnsurance.ensureLoggedIn, VoteController.zerovoteComment)
 
 routers.get('/course/list', CourseController.getAllCourses)
 routers.post('/course/add', AuthEnsurance.ensureLoggedIn, CourseController.addCourse)
@@ -60,5 +64,6 @@ routers.post('/course/leave', AuthEnsurance.ensureLoggedIn, CourseController.lea
 routers.post('/course/suggest', CourseController.suggestCourses)
 
 routers.get('/user/getCourses/:id', CourseController.getParticipateCourses)
+routers.get('/search', PostController.searchPosts)
 
 module.exports = routers;

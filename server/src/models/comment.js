@@ -14,5 +14,7 @@ var commentSchema = mongoose.Schema({
 })
 
 commentSchema.plugin(mongooseLeanVirtual)
+commentSchema.index({ content: "text" });
 
 module.exports = mongoose.model("comment", commentSchema);
+
