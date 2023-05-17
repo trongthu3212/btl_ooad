@@ -1,5 +1,6 @@
 var answerModel = require('../models/answer');
 const postModel = require('../models/post');
+var commonPopulators = require('./CommonPopulators');
 
 async function addAnswer(req, res) {
     let postId = req.body.postId
@@ -12,7 +13,11 @@ async function addAnswer(req, res) {
     });
 
     await answer.save()
-        .then(answer => { res.json(answer); })
+        .then(async answer => {
+            await answerModel.populate(answer, commonPopulators.answerPopulators)
+                .then(answer => res.json(answer))
+                .catch(err => res.status(500).json({ error: err }));
+        })
         .catch(err => { res.json({ error: err })});
 }
 

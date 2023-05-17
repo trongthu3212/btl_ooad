@@ -158,6 +158,9 @@ async function listPosts(req, res) {
             .then(async post => {
                 post.docs = await Promise.all(post.docs.map(async post => {
                     post.score = await VoteController.getPostVote(post._id);
+                    if (req.user) {
+                        post.voted = await VoteController.getCurrentUserPostVoteDetail(req, post._id);
+                    }
                     return post;
                 }))
                 res.json({ posts: post.docs, globalPostCount: unansweredFilter ? post.totalDocs : await postModel.estimatedDocumentCount() })
@@ -208,7 +211,11 @@ async function getPost(req, res) {
         res.status(404);
     } else {
         post.score = await VoteController.getPostVote(idquestion)
-        await CommentController.listCommentDetail({ postId: post._id }, res, comments => { post.comments = comments })
+        if (req.user) {
+            post.voted = await VoteController.getCurrentUserPostVoteDetail(req, idquestion);
+        }
+
+        await CommentController.listCommentDetail({ postId: post._id }, req, res, comments => { post.comments = comments })
 
         await answerModel.find({ post: idquestion })
             .populate(commonPopulators.answerPopulators)
@@ -216,14 +223,18 @@ async function getPost(req, res) {
             .then(async answers => {
                 post.answers = await Promise.all(answers.map(async answer => {
                     answer.score = await VoteController.getAnswerVote(answer._id);
-                    await CommentController.listCommentDetail({ answerId: answer._id }, res, comments => { answer.comments = comments })
+                    if (req.user) {
+                        answer.voted = await VoteController.getCurrentUserAnswerVoteDetail(req, answer._id);
+                    }
+                    await CommentController.listCommentDetail({ answerId: answer._id }, req, res, comments => { answer.comments = comments })
                     
                     return answer;
                 }));
 
                 res.json(post);
             })
-            .catch(err => res.status(500).json({ error: err }));
+            .catch(err => 
+                res.json({ error: err }));
     }
 }
 

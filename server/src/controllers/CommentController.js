@@ -1,7 +1,6 @@
 var commentModel = require('../models/comment');
 var commonPopulators = require('./CommonPopulators');
 const VoteController = require('./VoteController');
-var voteController = require('./VoteController')
 
 async function addComment(req, res) {
     let postId = req.body.postId
@@ -31,11 +30,15 @@ async function addComment(req, res) {
     var comment = new commentModel(commentObj);
 
     await comment.save()
-        .then(comment => { res.json(comment); })
+        .then(async comment => {
+            await commentModel.populate(comment, commonPopulators.commentPopulators)
+                .then(comment => res.json(comment))
+                .catch(err => res.status(500).json({ error: err }));
+        })
         .catch(err => { res.json({ error: err })});
 }
 
-async function listCommentDetail(idComposite, res, resultProvider) {
+async function listCommentDetail(idComposite, req, res, resultProvider) {
     let postId = idComposite.postId
     let answerId = idComposite.answerId
 
@@ -61,16 +64,18 @@ async function listCommentDetail(idComposite, res, resultProvider) {
         .then(async comments => {
             comments = await Promise.all(comments.map(async comment => {
                 comment.score = await VoteController.getCommentVote(comment._id)
+                comment.voted = await VoteController.getCurrentUserCommentVoteDetail(req, comment._id);
                 return comment
             }))
 
             resultProvider(comments)
         })
-        .catch(err => res.status(500).json({ error: err }))
+        .catch(err => 
+            res.status(500).json({ error: err }))
 }
 
 async function listComment(req, res) {
-    listCommentDetail(req.query, res, comments => { res.json(comments) })
+    listCommentDetail(req.query, req, res, comments => { res.json(comments) })
 }
 
 module.exports = {
