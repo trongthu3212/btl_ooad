@@ -11,6 +11,7 @@ import AuthContext from "Auth/AuthProvider";
 import { acceptAnswerById, addAnswer, changeVoteAnswer } from "Api/answer";
 import { toast } from "react-toastify";
 import { addComment } from "Api/comment";
+import DefaultAvatar from "Assets/DefaultAvatar.jfif"
 
 function QuestionPage() {
     let { idQuestion } = useParams();
@@ -314,7 +315,7 @@ function QuestionPage() {
                                     {question ? <span className={styles.actionTime}>Đã hỏi {convertDateTime(question.createdAt)}</span>
                                         : <Skeleton animation="wave" variant="rounded" width={80} height={18} />}
                                     <div className="d-flex">
-                                        {question ? <img src="" alt="" width={32} height={32} className={styles.avatar} />
+                                        {question ? <img src={question?.author?.avatar ?? DefaultAvatar} alt="" width={32} height={32} className={styles.avatar} />
                                         : <Skeleton animation="wave" variant="circular" width={32} height={32} />}
                                         <div className={styles.userDetail}>
                                             {question ? <a href="">{question?.author.username}</a>
@@ -386,7 +387,7 @@ function QuestionPage() {
                                                 {answer ? <span className={styles.actionTime}>Đã trả lời {convertDateTime(answer.createdAt)}</span>
                                                     : <Skeleton animation="wave" variant="rounded" width={150} height={18} />}
                                                 <div className="d-flex">
-                                                    {answer ? <img src="" alt="" width={32} height={32} className={styles.avatar} />
+                                                    {answer ? <img src={question?.author?.avatar ?? DefaultAvatar} alt="" width={32} height={32} className={styles.avatar} />
                                                         : <Skeleton animation="wave" variant="circular" width={32} height={32} />}
                                                     <div className={styles.userDetail}>
                                                         {answer ? <a href="">{answer?.author?.username}</a>

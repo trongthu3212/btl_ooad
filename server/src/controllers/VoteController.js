@@ -56,11 +56,15 @@ async function modifyVote(req, res, modelName, newVoteCount) {
 }
 
 async function getCurrentUserVoteDetail(req, id, modelName) {
+    if (!req.user) {
+        return 0;
+    }
+
     let searchReq = { user: req.user._id }
     searchReq[modelName] = id
 
     var result = await voteModel.findOne(searchReq);
-    return result.vote ?? 0;
+    return result?.vote ?? 0;
 }
 
 async function getCurrentUserVote(req, res, modelName) {
