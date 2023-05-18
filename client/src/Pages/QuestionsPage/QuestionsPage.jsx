@@ -7,6 +7,7 @@ import { getPostsPaging } from "../../Api/question-api";
 import Sidebar from "../../Layouts/Sidebar/Sidebar";
 import styles from "./QuestionsPage.module.scss";
 import AuthContext from 'Auth/AuthProvider';
+import SearchContext from 'SearchContext/SearchProvider';
 
 const CustomToggleButton = styled(ToggleButton)({
     borderRadius: "4px !important",
@@ -23,6 +24,8 @@ function QuestionsPage() {
     const navigate = useNavigate();
 
     const {auth} = useContext(AuthContext);
+
+    const {search} = useContext(SearchContext);
 
     // dữ liệu câu hỏi
     const [data, setData] = useState([]);
@@ -66,7 +69,7 @@ function QuestionsPage() {
             setTotal(res.globalPostCount);
             setIsLoading(false);
         })
-    }, [paging.page, paging.pageSize, state])
+    }, [paging.page, paging.pageSize, state, search])
 
     /**
      * Điều hướng sang trang câu hỏi

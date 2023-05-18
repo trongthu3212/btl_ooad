@@ -96,3 +96,12 @@ export const changeVoteQuestion = async (id, type) => {
         console.log(error);
     }
 };
+
+export const searchPostsPaging = async (page, pageSize, filter) => {
+    try {
+        const { data } = await axios.get(`search?page=${page}&quantity=${pageSize}&keyword=${filter}`);
+        return data;
+    } catch (error) {
+        console.log(error);
+    }
+};
