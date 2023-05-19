@@ -5,12 +5,12 @@ import { debounce } from "lodash";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { toast } from "react-toastify";
 import "./AskQuestionPage.scss";
-import { getPost, postQuestion } from "Api/question-api";
-import { useParams } from "react-router-dom";
+import { getPost, postQuestion, updatePost } from "Api/question-api";
+import { useNavigate, useParams } from "react-router-dom";
 
 function AskQuestionPage() {
     const [course, setCourse] = useState("");
-
+		const navigate = useNavigate();
 		const {idQuestion} = useParams();
 
 		const [data, setData] = useState({
@@ -74,18 +74,26 @@ function AskQuestionPage() {
 		const debounceSearchCourse = useCallback(debounce((nextValue) => fetchDropdownOptions(nextValue), 1000), []);
 
     function submitQuestion() {
-			postQuestion(data.title, data.content, data.course).then((res) => {
-				if (res) {
-					toast.success('Đặt câu hỏi thành công');
-					setData({
-						title: "",
-						content: "",
-						course: ""
-					})
-				} else {
-					toast.error('Có lỗi xảy ra');
-				}
-			})
+			if (idQuestion) {
+				const post = {...data, _id: idQuestion};
+				updatePost(post).then((res) => {
+					if (res) {
+						toast.success('Sửa câu hỏi thành công');
+						navigate(`/question/${idQuestion}`);
+					} else {
+						toast.error('Có lỗi xảy ra');
+					}
+				})
+			} else {
+				postQuestion(data.title, data.content, data.course).then((res) => {
+					if (res) {
+						toast.success('Đặt câu hỏi thành công');
+						navigate("/questions");
+					} else {
+						toast.error('Có lỗi xảy ra');
+					}
+				})
+			}
     }
 
 		function handleContent(e) {
@@ -162,8 +170,8 @@ function AskQuestionPage() {
 					</div>)}
 				</div>
 			</div>
-			<button type="button" className="btn btn-primary mt-4" onClick={() => submitQuestion} 
-				disabled={!data.title || !data.content || !data.course}>Đặt câu hỏi</button>
+			<button type="button" className="btn btn-primary mt-4" onClick={() => submitQuestion()} 
+				disabled={!data.title || !data.content || !data.course}>{idQuestion ? "Sửa câu hỏi" : "Đặt câu hỏi"}</button>
 		</div>
 	);
 }
