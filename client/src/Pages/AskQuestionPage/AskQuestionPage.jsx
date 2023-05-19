@@ -5,10 +5,13 @@ import { debounce } from "lodash";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { toast } from "react-toastify";
 import "./AskQuestionPage.scss";
-import { postQuestion } from "Api/question-api";
+import { getPost, postQuestion } from "Api/question-api";
+import { useParams } from "react-router-dom";
 
 function AskQuestionPage() {
     const [course, setCourse] = useState("");
+
+		const {idQuestion} = useParams();
 
 		const [data, setData] = useState({
 			title: "",
@@ -20,6 +23,18 @@ function AskQuestionPage() {
 		const [dataListCourse, setDataListCourse] = useState([]);
 
 		const [isFetchingDataCourse, setIsFetchingDataCourse] = useState(false);
+
+		useEffect(() => {
+			if (idQuestion) {
+				getPost(idQuestion).then((res) => {
+					if (res) {
+						setData({title: res.title, content: res.content, course: res.course._id});
+						setCourse(`${res.course.code} - ${res.course.name}`);
+					}
+					
+			});
+			};
+		}, []);
 
 		const dropdownRef = useRef(null);
   	useOutsideAlerter(dropdownRef);
@@ -106,7 +121,7 @@ function AskQuestionPage() {
     return (
 		<div className="ask-question-page">
 			<div className="ask-question-page__header">
-				Đặt câu hỏi công khai
+				{!idQuestion ? "Đặt câu hỏi công khai" : "Chỉnh sửa câu hỏi"}
 			</div>
 			<div className="ask-question-page--ask">
 				<div className="ask__title">
@@ -147,7 +162,7 @@ function AskQuestionPage() {
 					</div>)}
 				</div>
 			</div>
-			<button type="button" class="btn btn-primary mt-4" onClick={() => submitQuestion} 
+			<button type="button" className="btn btn-primary mt-4" onClick={() => submitQuestion} 
 				disabled={!data.title || !data.content || !data.course}>Đặt câu hỏi</button>
 		</div>
 	);

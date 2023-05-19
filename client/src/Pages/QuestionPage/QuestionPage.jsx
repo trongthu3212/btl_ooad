@@ -191,43 +191,84 @@ function QuestionPage() {
             return;
         }
         if (type == 1) {
+            if (question.voted == 1) {
+                changeVoteQuestion(idQuestion, "zerovote").then((res) => {
+                    if (!res) {
+                        toast.error("Có lỗi xảy ra");
+                        return;
+                    }
+                    const tmp = question.score - 1;
+                    setQuestion({...question, score: tmp, voted: 0});
+                    toast.success("Huỷ đánh giá thành công")
+                })
+                return;
+            }
             changeVoteQuestion(idQuestion, "upvote").then((res) => {
                 if (!res) {
                     toast.error("Có lỗi xảy ra");
                     return;
                 }
-                const tmp = question.score + 1;
-                setQuestion({...question, score: tmp});
+                const tmp = question.voted == -1 ? question.score + 2 : question.score + 1;
+                setQuestion({...question, score: tmp, voted: 1});
                 toast.success("Đánh giá thành công")
             })
         } else {
+            if (question.voted == -1) {
+                changeVoteQuestion(idQuestion, "zerovote").then((res) => {
+                    if (!res) {
+                        toast.error("Có lỗi xảy ra");
+                        return;
+                    }
+                    const tmp = question.score + 1;
+                    setQuestion({...question, score: tmp, voted: 0});
+                    toast.success("Huỷ đánh giá thành công")
+                })
+                return;
+            }
             changeVoteQuestion(idQuestion, "downvote").then((res) => {
                 if (!res) {
                     toast.error("Có lỗi xảy ra");
                     return;
                 }
-                const tmp = question.score - 1;
-                setQuestion({...question, score: tmp})
+                const tmp = question.voted == 1 ? question.score - 2 : question.score - 1;
+                setQuestion({...question, score: tmp, voted: -1})
                 toast.success("Đánh giá thành công")
             })
         }
     }
 
     function voteAnswer(type, id) {
+        const answerSelected = answers.find((answer) => answer.id == id);
         if (!auth) {
             toast.info("Bạn cần phải đăng nhập để thực hiện chức năng này");
             return;
         }
         if (type == 1) {
+            if (answerSelected.voted == 1) {
+                changeVoteAnswer(id, "zerovote").then((res) => {
+                    if (!res) {
+                        toast.error("Có lỗi xảy ra");
+                        return;
+                    }
+                    const tmp = answers.map((answer) => {
+                        if (answer.id === id) {
+                            return {...answer, score: answerSelected.score - 1, voted: 0};
+                        }
+                        return answer;
+                    });
+                    setAnswers(tmp);
+                    toast.success("Huỷ đánh giá thành công")
+                })
+                return;
+            }
             changeVoteAnswer(id, "upvote").then((res) => {
                 if (!res) {
                     toast.error("Có lỗi xảy ra");
                     return;
                 }
-                const scoreTmp = answers.find((answer) => answer.id == id).score + 1;
                 const tmp = answers.map((answer) => {
                     if (answer.id === id) {
-                        return {...answer, score: scoreTmp};
+                        return {...answer, score: answerSelected.voted == -1 ? answerSelected.score + 2 : answerSelected.score + 1, voted: 1};
                     }
                     return answer;
                 });
@@ -235,15 +276,31 @@ function QuestionPage() {
                 toast.success("Đánh giá thành công")
             })
         } else {
+            if (answerSelected.voted == -1) {
+                changeVoteAnswer(id, "zerovote").then((res) => {
+                    if (!res) {
+                        toast.error("Có lỗi xảy ra");
+                        return;
+                    }
+                    const tmp = answers.map((answer) => {
+                        if (answer.id === id) {
+                            return {...answer, score: answerSelected.score + 1, voted: 0};
+                        }
+                        return answer;
+                    });
+                    setAnswers(tmp);
+                    toast.success("Huỷ đánh giá thành công")
+                })
+                return;
+            }
             changeVoteAnswer(id, "downvote").then((res) => {
                 if (!res) {
                     toast.error("Có lỗi xảy ra");
                     return;
                 }
-                const scoreTmp = answers.find((answer) => answer.id == id).score - 1;
                 const tmp = answers.map((answer) => {
                     if (answer.id === id) {
-                        return {...answer, score: scoreTmp};
+                        return {...answer, score: answerSelected.voted == 1 ? answerSelected.score - 2 : answerSelected.score - 1, voted: -1};
                     }
                     return answer;
                 });
@@ -277,11 +334,11 @@ function QuestionPage() {
                     </div>
                     <div className={styles["question-content"]}>
                         <div className={styles.voteSection}>
-                            <button className={styles.btnVote} onClick={() => voteQuestion(1)}>
+                            <button className={`${styles.btnVote} ${question && question.voted == 1 && styles.voteActive}`} onClick={() => voteQuestion(1)}>
                                 <svg aria-hidden="true" className="svg-icon iconArrowUpLg" width="36" height="36" viewBox="0 0 36 36"><path d="M2 25h32L18 9 2 25Z"></path></svg>
                             </button>
                             <div className={styles.voteCount}>{question?.score}</div>
-                            <button className={styles.btnVote} onClick={() => voteQuestion(2)}>
+                            <button className={`${styles.btnVote} ${question && question.voted == -1 && styles.voteActive}`} onClick={() => voteQuestion(2)}>
                                 <svg aria-hidden="true" className="svg-icon iconArrowDownLg" width="36" height="36" viewBox="0 0 36 36"><path d="M2 11h32L18 27 2 11Z"></path></svg>
                             </button>
                         </div>
@@ -308,7 +365,7 @@ function QuestionPage() {
                             </div>
                             }
                             <div className="d-flex justify-content-between mt-5">
-                                <span className={styles.edit}>{auth && "Chỉnh sửa"}</span>
+                                <span className={styles.edit} onClick={() => navigate(`/question/edit/${idQuestion}`)}>{auth && "Chỉnh sửa"}</span>
                                 {question ? <span className={styles.actionTime}>Đã chỉnh sửa {convertDateTime(question.updatedAt)}</span>
                                     : <Skeleton animation="wave" variant="rounded" width={80} height={18} />}
                                 <div className={styles.userInfo}>
@@ -361,11 +418,11 @@ function QuestionPage() {
                             {answers.map((answer, idx) => (
                                 <div className={styles["question-content"]} key={idx}>
                                     <div className={styles.voteSection}>
-                                        <button className={styles.btnVote} onClick={() => voteAnswer(1, answer.id)}>
+                                        <button className={`${styles.btnVote} ${answer.voted == 1 && styles.voteActive}`} onClick={() => voteAnswer(1, answer.id)}>
                                             <svg aria-hidden="true" className="svg-icon iconArrowUpLg" width="36" height="36" viewBox="0 0 36 36"><path d="M2 25h32L18 9 2 25Z"></path></svg>
                                         </button>
                                         <div className={styles.voteCount}>{answer.score}</div>
-                                        <button className={styles.btnVote} onClick={() => voteAnswer(2, answer.id)}>
+                                        <button className={`${styles.btnVote} ${answer.voted == -1 && styles.voteActive}`} onClick={() => voteAnswer(2, answer.id)}>
                                             <svg aria-hidden="true" className="svg-icon iconArrowDownLg" width="36" height="36" viewBox="0 0 36 36"><path d="M2 11h32L18 27 2 11Z"></path></svg>
                                         </button>
                                         {answer?.accepted && <div className={`${styles.btnVote} ${styles.markBestAnswer}`}>

@@ -178,3 +178,10 @@
 .relativeTime {
     color: #9199a1;
 }
+
+.voteActive {
+    opacity: 1;
+    svg {
+        fill: #f48225;
+    }
+}

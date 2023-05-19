@@ -60,6 +60,7 @@ function App() {
                 </Route>
                 <Route path="question">
                     <Route path=":idQuestion" element={<QuestionPage />} />
+                    <Route path="edit/:idQuestion" element={<AskQuestionPage />} />
                 </Route>
                 <Route path="*" element={<NotFoundPage />} />
 
