@@ -17,7 +17,7 @@ const PostController = require('../controllers/PostController');
 
 routers.get('/test', testController.execute)
 routers.get('/emailExisted', userController.emailExisted)
-routers.get('/listPosts', postController.list)
+routers.post('/listPosts', postController.list)
 routers.get('/getAllPosts', postController.getAll)
 routers.get('/getAllUsers', userController.getAll)
 routers.get('/getPost/:idquestion', postController.get)
@@ -64,6 +64,5 @@ routers.post('/course/leave', AuthEnsurance.ensureLoggedIn, CourseController.lea
 routers.post('/course/suggest', CourseController.suggestCourses)
 
 routers.get('/user/getCourses/:id', CourseController.getParticipateCourses)
-routers.get('/search', PostController.searchPosts)
 
 module.exports = routers;
