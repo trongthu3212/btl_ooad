@@ -70,9 +70,15 @@ export const increasePostView = async (idQuestion) => {
     }
 };
 
-export const getPostsPaging = async (page, pageSize, filter) => {
+export const getPostsPaging = async (page, pageSize, filter, keyword) => {
+    const payload = new URLSearchParams({
+        page: page,
+        quantity: pageSize,
+        filter: filter,
+        keyword: keyword
+    });
     try {
-        const { data } = await axios.get(`listPosts?page=${page}&quantity=${pageSize}&filter=${filter}`);
+        const { data } = await axios.post("listPosts", payload);
         return data;
     } catch (error) {
         console.log(error);

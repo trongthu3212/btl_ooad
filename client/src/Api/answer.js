@@ -31,3 +31,12 @@ export const acceptAnswerById = async (id) => {
       console.log(error);
   }
 };
+
+export const unacceptAnswerById = async (id) => {
+  try {
+      const { data } = await axios.post(`answer/unaccept/${id}`);
+      return data;
+  } catch (error) {
+      console.log(error);
+  }
+};

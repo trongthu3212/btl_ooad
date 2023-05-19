@@ -8,7 +8,7 @@ import { Skeleton } from "@mui/material";
 import moment from "moment/moment";
 import 'moment/locale/vi'
 import AuthContext from "Auth/AuthProvider";
-import { acceptAnswerById, addAnswer, changeVoteAnswer } from "Api/answer";
+import { acceptAnswerById, addAnswer, changeVoteAnswer, unacceptAnswerById } from "Api/answer";
 import { toast } from "react-toastify";
 import { addComment } from "Api/comment";
 import DefaultAvatar from "Assets/DefaultAvatar.jfif"
@@ -114,20 +114,34 @@ function QuestionPage() {
     }
     
     function acceptAnswer(id) {
-        acceptAnswerById(id).then((res) => {
-            if (res) {
-                const tmp = answers.map((answer) => {
-                    if (answer.id == id) {
-                        return {...answer, accepted: true};
-                    }
-                    return {...answer, accepted: false};
-                })
-                setAnswers(tmp);
-                toast.success("Đã đánh dấu là câu trả lời tốt nhất");
-            } else {
-                toast.error('Có lỗi xảy ra');
-            }
-        })
+        if (answers.find((answer) => answer.id == id).accepted) {
+            unacceptAnswerById(id).then((res) => {
+                if (res) {
+                    const tmp = answers.map((answer) => {
+                        return {...answer, accepted: false};
+                    })
+                    setAnswers(tmp);
+                    toast.info("Đã huỷ chấp nhận câu trả lời");
+                } else {
+                    toast.error('Có lỗi xảy ra');
+                }
+            })
+        } else {
+            acceptAnswerById(id).then((res) => {
+                if (res) {
+                    const tmp = answers.map((answer) => {
+                        if (answer.id == id) {
+                            return {...answer, accepted: true};
+                        }
+                        return {...answer, accepted: false};
+                    })
+                    setAnswers(tmp);
+                    toast.success("Đã đánh dấu là câu trả lời tốt nhất");
+                } else {
+                    toast.error('Có lỗi xảy ra');
+                }
+            })
+        }
     }
 
     function handleAddComment(type, id) {
@@ -425,9 +439,9 @@ function QuestionPage() {
                                         <button className={`${styles.btnVote} ${answer.voted == -1 && styles.voteActive}`} onClick={() => voteAnswer(2, answer.id)}>
                                             <svg aria-hidden="true" className="svg-icon iconArrowDownLg" width="36" height="36" viewBox="0 0 36 36"><path d="M2 11h32L18 27 2 11Z"></path></svg>
                                         </button>
-                                        {answer?.accepted && <div className={`${styles.btnVote} ${styles.markBestAnswer}`}>
+                                        {answer?.accepted && <button className={`${styles.btnVote} ${styles.markBestAnswer}`} onClick={() => acceptAnswer(answer.id)}>
                                             <svg aria-hidden="true" className="svg-icon iconCheckmarkLg" width="36" height="36" viewBox="0 0 36 36"><path d="m6 14 8 8L30 6v8L14 30l-8-8v-8Z"></path></svg>
-                                        </div>}
+                                        </button>}
                                         {auth && question?.author.id == auth.id && !answer?.accepted && <button className={styles.btnVote} onClick={() => acceptAnswer(answer.id)}>
                                             <svg aria-hidden="true" className="svg-icon iconCheckmarkLg" width="36" height="36" viewBox="0 0 36 36"><path d="m6 14 8 8L30 6v8L14 30l-8-8v-8Z"></path></svg>
                                         </button>}

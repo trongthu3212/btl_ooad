@@ -64,7 +64,7 @@ function QuestionsPage() {
 
     useEffect(() => {
         setIsLoading(true);
-        getPostsPaging(paging.page, paging.pageSize, state).then(res => {
+        getPostsPaging(paging.page, paging.pageSize, state, search).then(res => {
             setData(res.posts);
             setTotal(res.globalPostCount);
             setIsLoading(false);
@@ -188,7 +188,7 @@ function QuestionsPage() {
                         <ToggleButtonGroup
                             value={paging.pageSize}
                             exclusive
-                            onChange={() => changePageSize}
+                            onChange={(e, value) => changePageSize(e, value)}
                             sx={{
                                 height: "32px"
                             }}

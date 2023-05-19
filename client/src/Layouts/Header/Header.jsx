@@ -11,7 +11,8 @@ import SearchContext from "SearchContext/SearchProvider";
 function Header() {
     let navigate = useNavigate();
     const { auth, setAuth } = useContext(AuthContext);
-    const { search, setSearch } = useContext(SearchContext);
+    const { setSearch } = useContext(SearchContext);
+    const [searchString, setSearchString] = useState("");
 
     function handleLoginBtn() {
         navigate("/users/login");
@@ -32,6 +33,7 @@ function Header() {
 
     function handleKeyUp(e) {
         if (e.key == "Enter") {
+            setSearch(searchString);
             navigate("/questions");
         }
     }
@@ -49,7 +51,7 @@ function Header() {
                 <svg fill="#525960" width="18" height="18">
                     <path d="m18 16.5-5.14-5.18h-.35a7 7 0 1 0-1.19 1.19v.35L16.5 18l1.5-1.5ZM12 7A5 5 0 1 1 2 7a5 5 0 0 1 10 0Z" />
                 </svg>
-                <input type="text" name="search" placeholder="Tìm kiếm..." value={search} onChange={(e) => setSearch(e.target.value)}
+                <input type="text" name="search" placeholder="Tìm kiếm..." value={searchString} onChange={(e) => setSearchString(e.target.value)}
                     onKeyUp={(e) => handleKeyUp(e)}/>
             </div>
             {auth?.username ? (
