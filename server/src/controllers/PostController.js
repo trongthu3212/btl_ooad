@@ -143,10 +143,9 @@ async function listPosts(req, res) {
 
         var filters = filter ? filter.split(',') : [];
         const unansweredFilter = filters.includes("unanswered");
-        const searchFilter = filters.includes("search");
 
         var aggregate = unansweredFilter ? [...postUnansweredAggregate] : [...postNoFilterAggregate];
-        if (searchFilter)
+        if (keyword)
         {
             aggregate.unshift(
                 {
@@ -170,7 +169,7 @@ async function listPosts(req, res) {
                     }
                     return post;
                 }))
-                res.json({ posts: post.docs, globalPostCount: (filters.length != 0) ? post.totalDocs : await postModel.estimatedDocumentCount() })
+                res.json({ posts: post.docs, globalPostCount: (filters.length != 0) || keyword ? post.totalDocs : await postModel.estimatedDocumentCount() })
             } )
             .catch(err =>
                 res.status(500).json(err));
